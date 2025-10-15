@@ -45,23 +45,26 @@
 
 
         /* ===== Thanh chạy chữ giống hình mẫu ===== */
-.welcome-bar {
-    background: #c00;          /* nền đỏ */
-    color: #fff;
-    border-radius: 4px;        /* bo góc */
-    padding: 6px 10px;         /* khoảng cách trong */
-    margin: 0 auto 20px auto;  /* cách dưới */
-    font-weight: bold;
-    text-align: center;
-      height: 1300px;
-    overflow: hidden;
-}
+        .welcome-bar {
+            background: #c00; /* nền đỏ đậm */
+            color: #fff;
+            border-radius: 4px; /* bo góc mềm */
+            padding: 8px 0; /* cao vừa để chữ nằm giữa */
+            margin: 0 auto 26px auto;
+            font-weight: bold; /* in đậm */
+            text-align: center;
+            display: flex;
+            align-items: center; /* căn giữa theo chiều cao */
+            justify-content: center;
+            height: 13px; /* chiều cao cố định để đều */
+            overflow: hidden; /* ẩn phần chữ thừa */
+        }
 
-.welcome-bar marquee {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-}
+            .welcome-bar marquee {
+                font-size: 16px; /* chữ lớn hơn chút */
+                font-weight: bold;
+                color: #fff;
+            }
 
         .page-title {
             font-size: 20px;

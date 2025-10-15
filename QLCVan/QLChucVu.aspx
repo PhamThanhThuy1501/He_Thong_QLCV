@@ -41,24 +41,24 @@
         }
 
         .welcome-bar {
-             background: #c00;                  /* nền đỏ đậm */
-  color: #fff;
-  border-radius: 4px;                /* bo góc mềm */
-  padding: 8px 0;                    /* cao vừa để chữ nằm giữa */
-  margin: 0 auto 26px auto;
-  font-weight: bold;                 /* in đậm */
-  text-align: center;
-  display: flex;
-  align-items: center;               /* căn giữa theo chiều cao */
-  justify-content: center;
-  height: 30px;                      /* chiều cao cố định để đều */
-  overflow: hidden;  
+            background: #c00;
+            color: #fff;
+            border-radius: 4px;
+            padding: 8px 0;
+            margin: 0 auto 26px auto;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 13px;
+            overflow: hidden;
         }
 
             .welcome-bar marquee {
-                 font-size: 16px;                   /* chữ lớn hơn chút */
-  font-weight: bold;
-  color: #fff;
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff;
             }
 
         .page-title {
@@ -166,23 +166,13 @@
                 background: #c00;
                 color: #fff;
             }
-            .btn-search {
-                  background: #0d6efd;         /* xanh primary */
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  font-weight: 600;
-  border-radius: 6px;
-  text-decoration: none;
-  transition: background-color .2s ease, box-shadow .2s ease, transform .05s ease;
-            }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="page">
         <div class="content-header">
-            <h2 class="content-header-title">QUẢN LÝ CHỨC VỤ</h2>
+            <h2 class="content-header-title">QUẢN LÝ NGƯỜI DÙNG</h2>
         </div>
 
         <div class="welcome-bar">
@@ -201,13 +191,12 @@
             <asp:LinkButton ID="btnSearch" runat="server" CssClass="btn-search" OnClick="btnSearch_Click">
                 <i class="fa fa-search"></i>
             </asp:LinkButton>
-           <button type="button"
-    class="btn btn-primary"
-    data-bs-toggle="modal"
-    data-bs-target="#addModal">
-    <i class="fa fa-plus"></i> Thêm chức vụ
-</button>
-
+            <button type="button"
+                class="btn btn-primary btn-add ms-2"
+                data-bs-toggle="modal"
+                data-bs-target="#addModal">
+                Thêm chức vụ
+            </button>
         </div>
 
         <!-- ✅ Bảng danh sách -->
@@ -223,33 +212,32 @@
                     <asp:BoundField DataField="MaChucVu" HeaderText="Mã chức vụ" />
                     <asp:BoundField DataField="TenChucVu" HeaderText="Tên chức vụ" />
                     <asp:TemplateField HeaderText="Thao Tác">
-    <ItemTemplate>
-        <a type="button" class="btn btn-primary btn-sm"
-           href='<%# "GanNhomQuyen.aspx?ma=" + Eval("MaChucVu") + "&ten=" + Eval("TenChucVu") %>'>
-           Gán Quyền
-        </a>
-
-        <!-- Nút sửa -->
-        <button type="button"
-                class="btn btn-warning btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#editModal"
-                data-ma='<%# Eval("MaChucVu") %>'
-                data-ten="<%# Eval("TenChucVu") %>">
-            <i class="fa fa-edit"></i>
-        </button>
-
-        <!-- Nút xóa -->
-        <button type="button"
-                class="btn btn-danger btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteModal"
-                data-id='<%# Eval("MaChucVu") %>'>
-            <i class="fa fa-trash"></i>
-        </button>
-    </ItemTemplate>
-</asp:TemplateField>
-
+                        <ItemTemplate>
+                                                            <a type="button" class="btn btn-primary"
+                                    href="<%# "GanNhomQuyen.aspx?ma=" +Eval("MaChucVu")+"&ten=" + Eval("TenChucVu") %>"
+                                    >
+                                    Gán Quyền
+                                </a>
+                            <button
+                                type="button"
+                                class="fa fa-pencil btn btn-light"
+                                style="font-size: 26px; color: blue; border: none;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal"
+                                data-ma='<%# Eval("MaChucVu") %>'
+                                data-ten="<%# Eval("TenChucVu") %>">
+                            </button>
+                            <button
+                                type="button"
+                                class="fa fa-trash btn btn-light"
+                                aria-hidden="true"
+                                style="font-size: 26px; color: red; border: none;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal"
+                                data-id='<%#Eval("MaChucVu") %>'>
+                            </button>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
         </div>
