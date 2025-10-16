@@ -224,15 +224,22 @@
               </select>
             </div>
           </div>
-<div class="field">
-  <div class="lbl">Người ký:</div>
-  <div class="ctl">
-    <select class="sel no-arrow" disabled>
-      <option selected>Tiểu đoàn trưởng</option>
-    </select>
-  </div>
-</div>
+        <div class="field">
+          <div class="lbl">Người ký:</div>
+          <div class="ctl">
+            <select class="sel no-arrow" disabled>
+              <option selected>Tiểu đoàn trưởng</option>
+            </select>
+          </div>
+        </div>
 
+        <div class="field">
+            <div class="lbl">Bảo mật:</div>
+            <div class="ctl radio-wrap">
+              <label><input type="radio" checked disabled> Có</label>
+              <label><input type="radio" disabled> Không</label>
+            </div>
+          </div>
 
           <div class="field">
             <div class="lbl">Người nhận:</div>
@@ -243,13 +250,7 @@
             </div>
           </div>
 
-          <div class="field">
-            <div class="lbl">Bảo mật:</div>
-            <div class="ctl radio-wrap">
-              <label><input type="radio" checked disabled> Có</label>
-              <label><input type="radio" disabled> Không</label>
-            </div>
-          </div>
+          
 
           <div class="row-full field">
             <div class="lbl">Trích yếu:</div>
