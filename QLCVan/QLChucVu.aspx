@@ -139,12 +139,12 @@
             }
 
         .grid-pager {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+           text-align: center !important;
             margin-top: 25px;
         }
+        .grid-pager table {
+    margin: 0 auto; /* căn giữa table chứa số trang */
+}
 
             .grid-pager a,
             .grid-pager span {
@@ -213,16 +213,16 @@
         <!-- ✅ Bảng danh sách -->
         <div class="table-wrapper">
             <asp:GridView ID="gvChucVu" runat="server" AutoGenerateColumns="False"
-                CssClass="table"
-                AllowPaging="True" PageSize="5"
-                OnPageIndexChanging="gvChucVu_PageIndexChanging"
-                PagerStyle-CssClass="grid-pager"
-                BorderStyle="None">
+    CssClass="table"
+    AllowPaging="True" PageSize="5"
+    OnPageIndexChanging="gvChucVu_PageIndexChanging"
+    PagerStyle-CssClass="grid-pager"
+    BorderStyle="None">
 
-                <Columns>
-                    <asp:BoundField DataField="MaChucVu" HeaderText="Mã chức vụ" />
-                    <asp:BoundField DataField="TenChucVu" HeaderText="Tên chức vụ" />
-                    <asp:TemplateField HeaderText="Thao Tác">
+    <Columns>
+        <asp:BoundField DataField="MaChucVu" HeaderText="Mã chức vụ" />
+        <asp:BoundField DataField="TenChucVu" HeaderText="Tên chức vụ" />
+        <asp:TemplateField HeaderText="Thao Tác">
     <ItemTemplate>
         <a type="button" class="btn btn-primary btn-sm"
            href='<%# "GanNhomQuyen.aspx?ma=" + Eval("MaChucVu") + "&ten=" + Eval("TenChucVu") %>'>
