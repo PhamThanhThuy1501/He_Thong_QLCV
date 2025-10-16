@@ -12,20 +12,11 @@
         .main-title { font-size: 20px; font-weight: bold; text-transform: uppercase; color: #1f2937; margin-bottom: 5px; }
         .content-header { background: transparent; padding: 0; border-bottom: none; margin: 0 auto 6px auto; }
         .content-header-title { text-transform: uppercase; font-weight: 700; font-size: 20px; color: #444; margin: 0 0 6px 0; }
-        .welcome-bar {   background: #c00;                  /* nền đỏ đậm */
-  color: #fff;
-  border-radius: 4px;                /* bo góc mềm */
-  padding: 8px 0;                    /* cao vừa để chữ nằm giữa */
-  margin: 0 auto 26px auto;
-  font-weight: bold;                 /* in đậm */
-  text-align: center;
-  display: flex;
-  align-items: center;               /* căn giữa theo chiều cao */
-  justify-content: center;
-  height: 30px;                      /* chiều cao cố định để đều */
-  overflow: hidden; }
+        .welcome-bar { background: #c00; color: #fff; border-radius: 4px; padding: 8px 0; margin: 0 auto 26px auto;
+                       font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;
+                       height: 13px; overflow: hidden; }
         .welcome-bar marquee { font-size: 16px; font-weight: bold; color: #fff; }
-        .page-title { font-size: 20px; font-weight: bold; text-align: center; color: #111; margin: 25px 0 20px 0; }
+        .page-title { font-size: 20px; font-weight: bold; text-align: start; color: #111; margin: 25px 0 20px 0; }
         .search-bar { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 0 auto 25px auto; }
         .search-bar label { font-weight: 600; color: #111; margin-right: 10px; }
         .search-bar input { border: 1px solid #ccc; border-radius: 4px; padding: 8px 10px; height: 34px; width: 280px; font-size: 14px; }
@@ -47,7 +38,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="page">
         <div class="content-header">
-            <h2 class="content-header-title">QUẢN LÝ CHỨC VỤ</h2>
+            <h2 class="content-header-title">QUẢN LÝ NGƯỜI DÙNG</h2>
         </div>
 
         <div class="welcome-bar">

@@ -348,14 +348,14 @@
                             </asp:TemplateField>
 
                             <%-- TRẠNG THÁI (120px – cố định) --%>
-                            <asp:TemplateField HeaderText="Trạng thái">
-                                <ItemTemplate>
-                                    <asp:Literal ID="litTrangThai" runat="server"
-                                        Text='<%# GetTrangThai(Eval("TrangThai"), Eval("GuiHayNhan")) %>' />
-                                </ItemTemplate>
-                                <HeaderStyle Width="120px" />
-                                <ItemStyle CssClass="status-cell" Width="120px" HorizontalAlign="Center" />
-                            </asp:TemplateField>
+                         <asp:TemplateField HeaderText="Trạng thái">
+    <ItemTemplate>
+        <%# GetTrangThai(Eval("TrangThai"), Eval("GuiHayNhan")) %>
+    </ItemTemplate>
+    <HeaderStyle Width="120px" />
+    <ItemStyle CssClass="status-cell" Width="120px" HorizontalAlign="Center" />
+</asp:TemplateField>
+
 
                             <%-- Thao tác (200px) --%>
                             <asp:TemplateField HeaderText="Thao tác">
