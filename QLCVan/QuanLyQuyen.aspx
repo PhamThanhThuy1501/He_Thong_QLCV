@@ -51,8 +51,8 @@
   display: flex;
   align-items: center;               /* căn giữa theo chiều cao */
   justify-content: center;
-  height: 30px;                      /* chiều cao cố định để đều */
-  overflow: hidden;                 /* ẩn phần chữ thừa */
+  height: 13px;                      /* chiều cao cố định để đều */
+  overflow: hidden;                  /* ẩn phần chữ thừa */
 }
 
 .welcome-bar marquee {
@@ -171,7 +171,7 @@
   }
 
   .grid-pager span {
-    background: #C00000;        /* 🔹 trang hiện tại tô đỏ */
+    background: #c00;        /* 🔹 trang hiện tại tô đỏ */
     color: #fff;
   }
 </style>
@@ -182,7 +182,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
   <div class="page">
     <div class="content-header">
-  <h2 class="content-header-title">QUẢN LÝ QUYỀN</h2>
+  <h2 class="content-header-title">QUẢN LÝ NGƯỜI DÙNG</h2>
 </div>
 
 <div class="welcome-bar">

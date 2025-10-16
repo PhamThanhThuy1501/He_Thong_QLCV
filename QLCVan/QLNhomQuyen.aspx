@@ -53,7 +53,7 @@
             display: flex;
             align-items: center; /* căn giữa theo chiều cao */
             justify-content: center;
-            height: 30px; /* chiều cao cố định để đều */
+            height: 13px; /* chiều cao cố định để đều */
             overflow: hidden; /* ẩn phần chữ thừa */
         }
 
@@ -183,7 +183,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="page">
         <div class="content-header">
-            <h2 class="content-header-title">QUẢN LÝ NHÓM QUYỀN</h2>
+            <h2 class="content-header-title">QUẢN LÝ NGƯỜI DÙNG</h2>
         </div>
 
         <div class="welcome-bar">
@@ -203,12 +203,11 @@
         <i class="fa fa-search"></i>
             </asp:LinkButton>
             <button type="button"
-    class="btn btn-primary"
-    data-bs-toggle="modal"
-    data-bs-target="#addModal">
-    <i class="fa fa-plus"></i> Thêm nhóm quyền
-</button>
-
+                class="btn btn-primary btn-add ms-2"
+                data-bs-toggle="modal"
+                data-bs-target="#addModal">
+                Thêm nhóm quyền
+            </button>
         </div>
 
         <!-- ✅ Bảng danh sách -->
