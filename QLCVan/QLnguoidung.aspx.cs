@@ -38,19 +38,26 @@ namespace QLCVan
 
         private void LoadNguoiDung()
         {
-            int? maNhom = string.IsNullOrWhiteSpace(ddlDonVi.SelectedValue) ? (int?)null : int.Parse(ddlDonVi.SelectedValue);
-            int? maCV = string.IsNullOrWhiteSpace(ddlChucVu.SelectedValue) ? (int?)null : int.Parse(ddlChucVu.SelectedValue);
+            int? maNhom = null;
+            if (int.TryParse(ddlDonVi.SelectedValue, out int tempNhom))
+                maNhom = tempNhom;
+
+            // Đổi kiểu của maChucVu từ int? -> string
+            string maChucVu = ddlChucVu.SelectedValue;
+            if (string.IsNullOrEmpty(maChucVu))
+                maChucVu = null;
 
             var tb = UserRepository.GetUsers(
                 txtSearchTenDN.Text.Trim(),
                 txtSearchEmail.Text.Trim(),
                 maNhom,
-                maCV
+                maChucVu
             );
 
             gvNguoiDung.DataSource = tb;
             gvNguoiDung.DataBind();
         }
+
 
         protected void btnSearch_Click(object sender, EventArgs e) => LoadNguoiDung();
 
@@ -77,40 +84,41 @@ namespace QLCVan
         private static readonly string CS =
             ConfigurationManager.ConnectionStrings["QLCVDb"].ConnectionString;
 
-        public static DataTable GetUsers(string tenDN, string email, int? maNhom, int? maChucVu)
+        public static DataTable GetUsers(string tenDN, string email, int? maNhom, string maChucVu)
         {
             using (var con = new SqlConnection(CS))
             using (var cmd = new SqlCommand(@"
-SELECT 
-    u.MaNguoiDung,
-    u.TenDN,
-    u.Email,
-    u.HoTen,
-    u.QuyenHan,
-    u.TrangThai,
-    u.MaNhom,
-    n.MoTa AS TenNhom,
-    u.MaChucVu,
-    cv.TenChucVu
-FROM dbo.tblNguoiDung u
-LEFT JOIN dbo.tblNhom n    ON n.MaNhom    = u.MaNhom
-LEFT JOIN dbo.tblChucVu cv ON cv.MaChucVu = u.MaChucVu
-WHERE (@TenDN  IS NULL OR u.TenDN  LIKE '%'+@TenDN+'%')
-  AND (@Email  IS NULL OR u.Email  LIKE '%'+@Email+'%')
-  AND (@MaNhom IS NULL OR u.MaNhom = @MaNhom)
-  AND (@MaCV   IS NULL OR u.MaChucVu = @MaCV)
-ORDER BY u.TenDN", con))
+            SELECT 
+                u.MaNguoiDung,
+                u.TenDN,
+                u.Email,
+                u.HoTen,
+                u.QuyenHan,
+                u.TrangThai,
+                u.MaNhom,
+                n.MoTa AS TenNhom,
+                u.MaChucVu,
+                cv.TenChucVu
+            FROM dbo.tblNguoiDung u
+            LEFT JOIN dbo.tblNhom n    ON n.MaNhom    = u.MaNhom
+            LEFT JOIN dbo.tblChucVu cv ON cv.MaChucVu = u.MaChucVu
+            WHERE (@TenDN IS NULL OR u.TenDN LIKE '%'+@TenDN+'%')
+              AND (@Email IS NULL OR u.Email LIKE '%'+@Email+'%')
+              AND (@MaNhom IS NULL OR u.MaNhom = @MaNhom)
+              AND (@MaChucVu IS NULL OR u.MaChucVu = @MaChucVu)
+            ORDER BY u.TenDN", con))
             {
                 cmd.Parameters.AddWithValue("@TenDN", (object)(string.IsNullOrWhiteSpace(tenDN) ? null : tenDN) ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Email", (object)(string.IsNullOrWhiteSpace(email) ? null : email) ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@MaNhom", (object)maNhom ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@MaCV", (object)maChucVu ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@MaChucVu", (object)maChucVu ?? DBNull.Value);
 
                 var tb = new DataTable();
                 using (var da = new SqlDataAdapter(cmd)) da.Fill(tb);
                 return tb;
             }
         }
+
 
         public static DataTable GetAllNhom()
         {
