@@ -9,8 +9,11 @@
 
 namespace QLCVan
 {
+
+
     public partial class LoaiCV
     {
+
         /// <summary>
         /// hfEditID control.
         /// </summary>
