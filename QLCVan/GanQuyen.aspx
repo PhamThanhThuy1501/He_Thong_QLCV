@@ -119,67 +119,87 @@
 }
 
 
-        /* ✅ Bảng danh sách */
-        .table-wrapper {
-            width: 70%;
-            margin: 0 auto;
-            background: #fff;
-        }
+.table-wrapper {
+    width: 70%;
+    margin: 0 auto;
+    background: #fff;
+    text-align: center; /* giúp pager căn giữa */
+}
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-        }
+/* Bảng */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
 
-            .table th,
-            .table td {
-                border: 1px solid #ddd;
-                padding: 8px 10px;
-                text-align: center;
-                font-size: 14px;
-            }
+/* Header đỏ */
+.table tr th {
+    background-color: #c00;
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 2px solid #900;
+}
 
-            /* 🔴 Tô đỏ hàng đầu tiên (header) của GridView */
-            .table tr th {
-                background-color: #c00; /* nền đỏ đậm */
-                color: #fff; /* chữ trắng */
-                font-weight: 600;
-                text-transform: uppercase;
-                border-bottom: 2px solid #900; /* viền đỏ đậm phía dưới */
-            }
+/* Thay thế toàn bộ rule .grid-pager trước đó bằng đoạn này */
+.grid-pager {
+  display: inline-flex;
+  gap: 8px;
+  padding: 0;                /* bỏ padding -> không có "hộp" quanh */
+  border: none !important;   /* bỏ viền ngoài hoàn toàn */
+  background: transparent;   /* bỏ nền */
+  margin: 20px auto 0 auto;  /* căn giữa */
+  box-shadow: none;          /* bỏ shadow nếu có */
+}
+
+/* Các ô số / link */
+.grid-pager a {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;   /* ô riêng lẻ có viền nhẹ */
+  background: #fff;
+  color: #111;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Hover cho ô không phải trang hiện tại */
+.grid-pager a:hover {
+  color: #c00;
+  border-color: #ccc;
+  background: #fff;
+}
+
+/* Trang hiện tại */
+.grid-pager span {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #c00;
+  background: #c00;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Thu nhỏ khi màn hình nhỏ */
+@media (max-width: 600px) {
+  .grid-pager a, .grid-pager span { padding:6px 8px; }
+}
 
 
+/* Nếu bạn muốn nút đầu/ cuối (First/Last) nhỏ hơn */
+.grid-pager .pager-aux {
+    padding: 6px 8px;
+    font-weight: 600;
+}
 
-        /* ✅ Phân trang ra giữa, KHÔNG VIỀN */
-        .grid-pager {
-            display: flex;
-            justify-content: center; /* 🔹 căn giữa ngang */
-            align-items: center;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-            .grid-pager a,
-            .grid-pager span {
-                border: none; /* ❌ bỏ viền */
-                background: none; /* ❌ bỏ nền trắng */
-                padding: 6px 12px;
-                border-radius: 4px;
-                font-weight: 500;
-                color: #111;
-                text-decoration: none;
-                transition: all 0.2s ease;
-            }
-
-                .grid-pager a:hover {
-                    color: #c00; /* 🔹 khi hover chuyển sang đỏ */
-                }
-
-            .grid-pager span {
-                background: #c00; /* 🔹 trang hiện tại tô đỏ */
-                color: #fff;
-            }
+/* Responsive: thu nhỏ khi màn hình nhỏ */
+@media (max-width: 600px) {
+    .grid-pager { gap:4px; padding:8px; }
+    .grid-pager a, .grid-pager span { padding:6px 8px; }
+}
     </style>
 </asp:Content>
 

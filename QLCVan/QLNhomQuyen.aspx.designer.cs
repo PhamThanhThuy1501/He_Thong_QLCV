@@ -15,13 +15,22 @@ namespace QLCVan
     {
 
         /// <summary>
-        /// txtTenQuyenSR control.
+        /// hdfMaNhomQuyen control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTenQuyenSR;
+        protected global::System.Web.UI.WebControls.HiddenField hdfMaNhomQuyen;
+
+        /// <summary>
+        /// hdDeleteId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdDeleteId;
 
         /// <summary>
         /// txtMaQuyenSR control.
@@ -33,13 +42,22 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.TextBox txtMaQuyenSR;
 
         /// <summary>
+        /// txtTenQuyenSR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtTenQuyenSR;
+
+        /// <summary>
         /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnSearch;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
         /// gvNhomQuyen control.
@@ -78,31 +96,13 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Button btnSave;
 
         /// <summary>
-        /// hdDeleteId control.
+        /// hdfMaNhomQuyen_Edit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdDeleteId;
-
-        /// <summary>
-        /// btnConfirmDelete control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
-
-        /// <summary>
-        /// hdfMaNhomQuyen control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfMaNhomQuyen;
+        protected global::System.Web.UI.WebControls.HiddenField hdfMaNhomQuyen_Edit;
 
         /// <summary>
         /// txtEditMa control.
@@ -130,5 +130,23 @@ namespace QLCVan
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpdate;
+
+        /// <summary>
+        /// HiddenField1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddenField1;
+
+        /// <summary>
+        /// btnConfirmDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
     }
 }
