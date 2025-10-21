@@ -83,38 +83,45 @@
                 </asp:ContentPlaceHolder>
             </div>
             <div id="footer" <%--style="background-color: #2E4E1E;--%>">
-                <div id="footermenu">
-                    <div style="text-align:center">
-                    <ul >
-                        <uc1:HitCount ID="HitCount1" runat="server" />
-                        </ul>
-                        </div>
-                    <div>
-                        <ul>
-                        <asp:Repeater ID="rptMenu2" runat="server">
+               <footer id="footer">
+  <div id="footermenu" class="footer-inner">
+    <!-- Hit count (giữ server control) -->
+    <div class="foot-block foot-hitcount" style="text-align:center">
+      <ul>
+        <li class="hitcount-item">
+          <uc1:HitCount ID="HitCount1" runat="server" />
+        </li>
+      </ul>
+    </div>
 
-                            <ItemTemplate>
-                                <asp:HiddenField ID="hdCateID" Value='<%# Eval("MenuID") %>' runat="server"></asp:HiddenField>
-                                <li><a href='<%# Eval("MenuURL") %>'>
-                                    <%# Eval("MenuName") %></a> </li>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </ul>
-                        </div>
-                    <div style="color: #ffffff">
-                    <span>
-                    <center>
-                      
-                           <br /><br />
+    <!-- Menu (Repeater) -->
+    <div class="foot-block foot-links" aria-label="footer links">
+      <ul id="footer-links-list">
+        <asp:Repeater ID="rptMenu2" runat="server">
+          <ItemTemplate>
+            <asp:HiddenField ID="hdCateID" Value='<%# Eval("MenuID") %>' runat="server" />
+            <li>
+              <a href='<%# Eval("MenuURL") %>'><%# Eval("MenuName") %></a>
+            </li>
+          </ItemTemplate>
+        </asp:Repeater>
+      </ul>
+    </div>
 
+    <!-- Thông tin đơn vị (PHIÊN B - đã bỏ phần "Thông tin chung") -->
+    <div class="foot-block foot-copy" role="contentinfo">
+      <div class="footer-copy">
+        <div class="unit-title">Đơn vị: <span class="unit-name">Trường Quân sự Quân khu 2</span></div>
 
-                            Bản quyền thuộc về Trung tâm phát triển phần mềm SEVN<br />
-                            Địa chỉ: Dân Tiến - Khoái Châu - Hưng Yên<br />
-                            Email: contact@congnghephanmem.vn - Điện thoại: 0912.188.636</center>
-                        <br />
-                    </span>
-                </div>
-                </div>
+        <ul class="info-list">
+          <li>Địa điểm: Phường Vĩnh Phúc, tỉnh Phú Thọ.</li>
+          <li>Fax: 02113860111</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
                
             </div>
         </div>
