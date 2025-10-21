@@ -81,6 +81,23 @@
   margin: 0 auto;           /* căn giữa */
 }
 
+    /* Loại bỏ nền xám */
+.table tbody tr {
+    background-color: #fff !important;
+}
+
+/* Hover nhẹ */
+.table-hover tbody tr:hover {
+    background-color: #f6f6f6 !important;
+}
+
+/* Xóa đường line trên phân trang */
+.pager {
+    border-top: none !important;
+}
+
+
+
   </style>
 </asp:Content>
 
@@ -119,7 +136,8 @@
 
       <!-- Bảng -->
      <asp:GridView ID="gvQLNhom" runat="server" AutoGenerateColumns="False"
-    CssClass="table table-bordered table-striped table-hover"
+    CssClass="table table-bordered table-hover"
+
     HeaderStyle-CssClass="grid-header-red"
     Width="60%" CellPadding="4" ForeColor="#333333"
     DataKeyNames="MaDonVi"
@@ -155,32 +173,38 @@
       </asp:TemplateField>
 
       <asp:TemplateField HeaderText="Thao tác">
-        <HeaderStyle HorizontalAlign="Center" />
-        <ItemTemplate>
-          <asp:LinkButton ID="btnEdit" runat="server"
-              CommandName="Edit" CommandArgument='<%# Eval("MaDonVi") %>'
-              CssClass="btn btn-warning btn-sm me-1" ToolTip="Sửa">
-            <i class="fa fa-edit"></i>
-          </asp:LinkButton>
+    <HeaderStyle HorizontalAlign="Center" />
+    <ItemStyle HorizontalAlign="Center" />
+    <ItemTemplate>
+        <div style="display: flex; justify-content: center; gap: 8px;">
+            <asp:LinkButton ID="btnEdit" runat="server"
+                CommandName="Edit" CommandArgument='<%# Eval("MaDonVi") %>'
+                CssClass="btn btn-warning btn-sm" ToolTip="Sửa">
+                <i class="fa fa-edit"></i>
+            </asp:LinkButton>
 
-          <!-- KHÔNG đặt OnClientClick ở đây để tránh lỗi quote -->
-          <asp:LinkButton ID="btnDelete" runat="server"
-              CssClass="btn btn-danger btn-sm" ToolTip="Xóa">
-            <i class="fa fa-trash"></i>
-          </asp:LinkButton>
-        </ItemTemplate>
+            <asp:LinkButton ID="btnDelete" runat="server"
+                CssClass="btn btn-danger btn-sm" ToolTip="Xóa">
+                <i class="fa fa-trash"></i>
+            </asp:LinkButton>
+        </div>
+    </ItemTemplate>
 
-        <EditItemTemplate>
-          <asp:LinkButton ID="btnUpdate" runat="server"
-              CommandName="Update" CssClass="btn btn-success btn-sm me-1" ToolTip="Lưu">
-            <i class="fa fa-check"></i>
-          </asp:LinkButton>
-          <asp:LinkButton ID="btnCancel" runat="server"
-              CommandName="Cancel" CssClass="btn btn-secondary btn-sm" ToolTip="Hủy">
-            <i class="fa fa-times"></i>
-          </asp:LinkButton>
-        </EditItemTemplate>
-      </asp:TemplateField>
+    <EditItemTemplate>
+        <div style="display: flex; justify-content: center; gap: 8px;">
+            <asp:LinkButton ID="btnUpdate" runat="server"
+                CommandName="Update" CssClass="btn btn-success btn-sm" ToolTip="Lưu">
+                <i class="fa fa-check"></i>
+            </asp:LinkButton>
+
+            <asp:LinkButton ID="btnCancel" runat="server"
+                CommandName="Cancel" CssClass="btn btn-secondary btn-sm" ToolTip="Hủy">
+                <i class="fa fa-times"></i>
+            </asp:LinkButton>
+        </div>
+    </EditItemTemplate>
+</asp:TemplateField>
+
 
     </Columns>
 </asp:GridView>

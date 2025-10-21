@@ -15,13 +15,22 @@ namespace QLCVan
     {
 
         /// <summary>
-        /// txtTenChucVuSR control.
+        /// hdfID control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTenChucVuSR;
+        protected global::System.Web.UI.WebControls.HiddenField hdfID;
+
+        /// <summary>
+        /// hdfDeleteKey control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfDeleteKey;
 
         /// <summary>
         /// txtMaChucVuSR control.
@@ -33,13 +42,22 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.TextBox txtMaChucVuSR;
 
         /// <summary>
+        /// txtTenChucVuSR control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtTenChucVuSR;
+
+        /// <summary>
         /// btnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnSearch;
+        protected global::System.Web.UI.WebControls.Button btnSearch;
 
         /// <summary>
         /// gvChucVu control.
@@ -78,24 +96,6 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Button btnSave;
 
         /// <summary>
-        /// hdDeleteId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdDeleteId;
-
-        /// <summary>
-        /// btnConfirmDelete control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
-
-        /// <summary>
         /// hdfMaChucVu control.
         /// </summary>
         /// <remarks>
@@ -105,13 +105,13 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.HiddenField hdfMaChucVu;
 
         /// <summary>
-        /// txtEditMa control.
+        /// txtEditMaChucVu control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEditMa;
+        protected global::System.Web.UI.WebControls.TextBox txtEditMaChucVu;
 
         /// <summary>
         /// txtEditTen control.
@@ -130,5 +130,23 @@ namespace QLCVan
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpdate;
+
+        /// <summary>
+        /// hdDeleteId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdDeleteId;
+
+        /// <summary>
+        /// btnConfirmDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
     }
 }

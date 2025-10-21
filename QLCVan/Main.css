@@ -1,4 +1,17 @@
-﻿body {
+﻿/* ---------- Full CSS with cleaned footer (FINAL - updated & menu overflow fix) ---------- */
+
+/* make box-sizing predictable for the whole page (prevents overflow surprises) */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --frame-max-width: 1400px; /* match #frame */
+    --content-max-width: 1200px; /* match #content */
+}
+
+/* base */
+body {
     height: 100vh; /* full chiều cao màn hình */
     width: 100vw; /* full chiều rộng */
     margin: 0;
@@ -16,18 +29,20 @@
 
 #frame {
     width: 100%; /* thay vì 960px */
-    max-width: 1400px; /* giới hạn nếu cần */
+    max-width: var(--frame-max-width); /* giới hạn nếu cần */
     margin: 0 auto; /* căn giữa nếu có max-width */
     text-align: left;
     background-color: #FFF; /* nền trắng */
 }
 
+/* Header */
 #header {
     width: 100%;
     position: relative;
     border-bottom: 2px solid #c00; /* viền đỏ dưới banner */
     background-color: #fff;
     font-family: Tahoma, sans-serif;
+    overflow: visible; /* allow shadows/effects but we will prevent children overflow with containers */
 }
 
 /* Banner (logo ở giữa) */
@@ -41,6 +56,7 @@
         width: 190px;
     }
 
+/* right-side block (link). keep it inside header and avoid pushing layout */
 #link {
     margin-top: 0px;
     width: 200px;
@@ -53,42 +69,60 @@
     margin-left: 0px;
 }
 
+/* small utilities */
 .txtdn {
     border-radius: 30px;
 }
 
-/* MENU ngang */
+/* ----------------- MENU ngang (fixed) ----------------- */
+/* Container: centered and constrained to frame width so nothing sticks out */
 #menu {
     width: 100%;
+    max-width: var(--content-max-width); /* align menu to main content width */
+    margin: 20px auto 10px; /* center inside the frame */
+    padding: 0 12px; /* horizontal padding to avoid touching edges */
     background-color: white;
     text-align: center;
-    margin: 20px;
-    margin-bottom: 10px;
-    padding: 0;
+    box-sizing: border-box;
 }
 
+    /* ---------- IMPORTANT MENU FIX: keep items in one row, spaced evenly ---------- */
+    /* use flex to avoid overflow; do NOT wrap on wider screens; distribute items */
     #menu ul {
         list-style: none;
         margin: 0;
         padding: 0;
-        display: inline-block;
+        display: flex;
+        flex-wrap: nowrap; /* do not wrap on normal screens */
+        justify-content: space-between; /* spread items across the width evenly */
+        gap: 12px; /* small gap between items */
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
     }
 
+        /* allow each item to size naturally but not grow too large */
         #menu ul li {
-            display: inline-block;
+            display: inline-flex;
+            flex: 0 1 auto;
+            align-items: center;
+            justify-content: center;
         }
 
+            /* link appearance - reduced horizontal padding for fit, prevent internal wrapping */
             #menu ul li a {
                 position: relative;
                 display: block;
-                padding: 10px 20px;
+                padding: 8px 10px; /* slightly reduced so long label sets fit on one line */
                 color: black;
                 font-weight: bold;
                 font-size: 14px;
                 text-decoration: none;
                 text-transform: uppercase;
+                white-space: nowrap; /* avoid breaking words inside the link */
             }
 
+                /* hover underline effect */
                 #menu ul li a:after {
                     content: '';
                     position: absolute;
@@ -97,16 +131,39 @@
                     width: 0%;
                     height: 3px;
                     background: red;
-                    transition: width 0.3s ease;
+                    transition: width 0.25s ease;
                 }
 
                 #menu ul li a:hover::after {
                     width: 100%;
                 }
 
+/* responsive adjustments for smaller screens: allow wrapping and reduce spacing */
+@media (max-width: 900px) {
+    #menu {
+        padding: 0 8px;
+        margin: 12px auto 8px;
+        margin-right: 15px !important;
+    }
+
+        #menu ul {
+            gap: 8px;
+            flex-wrap: wrap; /* allow wrap on narrow screens */
+            justify-content: center; /* center wrapped rows */
+            margin-right: 15px !important;
+        }
+
+            #menu ul li a {
+                padding: 8px 10px;
+                font-size: 13px;
+                margin-right: 15px !important;
+            }
+}
+
+/* ----------------- Slide / Content / Cate (unchanged) ----------------- */
 #slide {
     width: 100%;
-    max-width: 1400px;
+    max-width: var(--frame-max-width);
     margin: 10px auto;
     height: auto;
     position: relative;
@@ -122,9 +179,10 @@
 
 #content {
     width: 100%;
-    max-width: 1200px;
+    max-width: var(--content-max-width);
     margin: 20px auto;
     position: relative;
+    margin-bottom: 0; /* remove bottom gap so footer can sit flush */
 }
 
 .cate {
@@ -146,28 +204,215 @@
         margin: 5px 8px;
     }
 
-#footer {
-    height: 200px;
-    background-color: #FAFAFA;
-    color: Gray;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    border-top: 1px solid #CECECE;
-    border-left: 1px solid #CECECE;
-    border-right: 1px solid #CECECE;
-    text-align: center;
-    padding-top: 10px;
+/* ================= Footer (final, requested) ================= */
+
+/* Variables for footer */
+:root {
+    --footer-frame-width: 1400px; /* match #frame */
+    --footer-content-width: 1200px; /* match #content */
+    --footer-inner-bg: #e9e9e9; /* gray (user requested) */
+    --footer-text: #000000; /* black text (user requested) */
+    --footer-muted: #444444;
+    --footer-accent: #c92b2b;
+    --hit-label-color: #0b5394;
 }
 
-#footermenu ul li {
-    float: left;
-    padding-left: 5px;
-    padding-right: 5px;
+/* Outer footer: spacing only; remove top padding so footer touches content */
+#footer {
+    background: transparent;
+    color: var(--footer-text) !important;
+    border-top: none;
     text-align: center;
-    height: 34px;
-    position: relative;
-    list-style: none;
+    padding: 0; /* flush to content above */
+    box-sizing: border-box;
+    font-family: "Times New Roman", Times, serif; /* serif for footer */
+    margin: 0;
 }
+
+/* Inner band: background aligned to frame width */
+#footermenu.footer-inner {
+    width: 100%;
+    max-width: var(--footer-frame-width);
+    margin: 0 auto;
+    padding: 14px 0; /* small vertical padding inside band */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background-color: var(--footer-inner-bg); /* gray background */
+    color: var(--footer-text);
+    border-radius: 0;
+    box-shadow: none;
+    font-family: "Times New Roman", Times, serif;
+}
+
+/* Content block: constrained to content width */
+#footermenu .foot-block {
+    width: 100%;
+    max-width: var(--footer-content-width);
+    margin: 0 auto;
+    padding: 12px 24px;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: "Times New Roman", Times, serif;
+}
+
+/* Move hitcount (Số lượng truy cập...) to left within content width */
+#footermenu .hitcount-row,
+#footermenu .hitcount-item,
+#footermenu .hitcount-wrap,
+#footermenu > .hitcount,
+#footermenu > div.hitcount,
+#footermenu .hitcount-container,
+#footermenu .hitcount {
+    width: 100% !important;
+    max-width: var(--footer-content-width) !important;
+    margin: 0 auto 8px 0 !important; /* align left inside the content block */
+    padding: 0 !important;
+    text-align: left !important;
+    color: var(--hit-label-color) !important; /* label color blue */
+    font-weight: 700;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* If the hitcount is wrapped in a centered div, force that div left */
+#footermenu > div[style*="text-align:center"],
+#footermenu > div[style*="text-align:center"] * {
+    text-align: left !important;
+}
+
+/* Smaller hitcount item styling (labels blue) */
+#footermenu .hitcount-item {
+    display: inline-block;
+    padding: 6px 8px;
+    color: var(--hit-label-color) !important; /* blue label */
+    font-weight: 700;
+}
+
+    /* Numbers wrapped with .count will be red */
+    #footermenu .hitcount-item .count,
+    #footermenu .hitcount-row .count,
+    #footermenu .hitcount-wrap .count,
+    #footermenu .hitcount .count,
+    #footermenu .hitcount-container .count {
+        color: var(--footer-accent) !important; /* red for numbers */
+        font-weight: 900;
+    }
+
+/* Footer nav links (vertical) */
+#footer-links-list {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    display: block;
+    width: 100%;
+}
+
+    #footer-links-list li {
+        display: block;
+        margin: 6px 0;
+        padding: 4px 6px;
+        box-sizing: border-box;
+    }
+
+        #footer-links-list li a {
+            color: var(--footer-text) !important; /* links black */
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+            #footer-links-list li a:hover {
+                color: #333 !important;
+                text-decoration: underline;
+            }
+
+/* Unit title & name (Times New Roman) */
+#footer .unit-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--footer-text) !important;
+    font-family: "Times New Roman", Times, serif;
+}
+
+/* user requested: unit name black */
+#footer .unit-name {
+    text-decoration: none !important;
+    color: var(--footer-text) !important; /* force black unit name */
+    font-weight: 700;
+    margin-left: 8px;
+    display: inline-block;
+    font-family: "Times New Roman", Times, serif;
+}
+
+/* Info list: ĐỊA ĐIỂM & FAX (black, larger) */
+#footer .info-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    font-size: 17px; /* larger for clarity */
+    color: var(--footer-text) !important;
+    line-height: 1.6;
+    text-align: center;
+    font-weight: 700;
+    font-family: "Times New Roman", Times, serif;
+}
+
+    #footer .info-list li {
+        margin: 4px 0;
+    }
+
+/* Ensure footer area colors stick (avoid inheritance) */
+#footermenu, #footermenu * {
+    color: inherit !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 900px) {
+    :root {
+        --footer-frame-width: 92%;
+        --footer-content-width: 92%;
+    }
+
+    #footermenu.footer-inner {
+        padding: 12px 0;
+    }
+
+    #footermenu .foot-block {
+        padding: 10px 12px;
+    }
+
+    #footer .unit-title {
+        font-size: 20px;
+    }
+
+    #footer .info-list {
+        font-size: 15px;
+    }
+
+    #footer-links-list li {
+        margin: 6px 0;
+        padding: 6px 4px;
+    }
+
+    /* keep hitcount left on small screens */
+    #footermenu .hitcount-row,
+    #footermenu .hitcount-item {
+        text-align: left !important;
+        margin-left: 0 !important;
+    }
+
+        /* ensure .count remains visible on small screens */
+        #footermenu .hitcount-item .count,
+        #footermenu .hitcount-row .count {
+            font-weight: 800;
+        }
+}
+
+/* ========== rest of original CSS (unchanged) ========== */
 
 .imgcate {
     margin-top: 10px;
@@ -195,7 +440,6 @@
         margin: 0px;
     }
 
-
 #login {
     position: absolute;
     top: 5px;
@@ -218,7 +462,6 @@
         #login a:hover {
             text-decoration: underline;
         }
-
 
 #titleRight {
     width: 100%;
