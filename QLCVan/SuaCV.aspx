@@ -5,80 +5,273 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        :root{--ink:#0f172a;--red:#c00000;--blue:#0d6efd;--line:#e5e7eb}
+        :root {
+            --ink: #0f172a;
+            --red: #c00000;
+            --blue: #0d6efd;
+            --line: #e5e7eb
+        }
 
-.content-header{background:transparent;padding:0;border-bottom:none;margin:0 auto 6px}
-.content-header-title{text-transform:uppercase;font-weight:700;font-size:20px;color:#444;margin:0 0 6px}
+        .content-header {
+            background: transparent;
+            padding: 0;
+            border-bottom: none;
+            margin: 0 auto 6px
+        }
 
-.welcome-bar{background:#c00;color:#fff;border-radius:4px;padding:8px 0;margin:0 auto 26px;font-weight:bold;text-align:center;display:flex;align-items:center;justify-content:center;height:15px;overflow:hidden}
-.welcome-bar marquee{font-size:16px;font-weight:bold;color:#fff}
+        .content-header-title {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 20px;
+            color: #444;
+            margin: 0 0 6px
+        }
 
-.form-container{margin:40px auto;padding:30px;max-width:900px;border-radius:12px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-.form-title{text-align:center;font-weight:700;font-size:22px;margin-bottom:22px;color:#222}
+        .welcome-bar {
+            background: #c00;
+            color: #fff;
+            border-radius: 4px;
+            padding: 8px 0;
+            margin: 0 auto 26px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 15px;
+            overflow: hidden
+        }
 
-/* Lưới 2 cột: 120px (label) + phần còn lại (input) */
-.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 30px}
-.form-field{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:15px}
-.form-field-full-width{grid-column:1/-1}
-.form-field-full-width .form-field-inner{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:15px}
+            .welcome-bar marquee {
+                font-size: 16px;
+                font-weight: bold;
+                color: #fff
+            }
 
-/* Label luôn cùng bề rộng, căn phải trên desktop */
-.form-label{font-weight:600;color:#555;text-align:right}
+        .form-container {
+            margin: 40px auto;
+            padding: 30px;
+            max-width: 900px;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08)
+        }
 
-/* Ô nhập chiếm phần còn lại, không tràn */
-.form-input-control{min-width:0}
+        .form-title {
+            text-align: center;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 22px;
+            color: #222
+        }
 
-/* Input/Select/Textarea đồng bộ chiều cao – không chồng chéo */
-.form-input,.form-select,.form-textarea{
-  width:100%;padding:12px 14px;border:1px solid #dcdcdc;border-radius:8px;
-  box-sizing:border-box;background:#f9f9f9;transition:all .2s;line-height:1.4
-}
-.form-input:focus,.form-select:focus,.form-textarea:focus{
-  outline:none;border-color:#0b57d0;box-shadow:0 0 0 2px rgba(11,87,208,.2);background:#fff
-}
-.form-textarea{resize:vertical;min-height:100px}
+        /* Lưới 2 cột: 120px (label) + phần còn lại (input) */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 20px 30px
+        }
 
-/* Select có mũi tên, chừa padding phải để không đè chữ */
-.form-select{
-  -webkit-appearance:none;-moz-appearance:none;appearance:none;
-  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23333" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-  background-repeat:no-repeat;background-position:right 12px center;padding-right:36px
-}
+        .form-field {
+            display: grid;
+            grid-template-columns: 120px minmax(0,1fr);
+            align-items: center;
+            gap: 15px
+        }
 
-/* Radio cùng hàng, không vỡ layout */
-.radio-group{display:flex;align-items:center;gap:20px}
-.radio-list td{padding:0;white-space:nowrap}
-.radio-list label{margin-right:20px}
+        .form-field-full-width {
+            grid-column: 1/-1
+        }
 
-/* Hàng upload/file list cũng theo 2 cột 120px + 1fr */
-.file-upload-row,.file-list-row{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:15px}
-.file-upload-main-container{display:flex;align-items:center;gap:10px}
-.file-upload-custom{display:flex;align-items:center;border:1px solid #dcdcdc;border-radius:8px;background:#f9f9f9;height:40px}
-.file-input-hidden{position:absolute;left:-9999px}
-.file-upload-label{display:inline-flex;align-items:center;height:40px;padding:0 16px;background:#e8e8e8;border-right:1px solid #dcdcdc;border-radius:8px 0 0 8px;font-weight:600;cursor:pointer}
-.file-chosen-text{display:inline-flex;align-items:center;height:40px;padding:0 12px;color:#777}
+            .form-field-full-width .form-field-inner {
+                display: grid;
+                grid-template-columns: 120px minmax(0,1fr);
+                align-items: center;
+                gap: 15px
+            }
 
-.file-list-control-container{display:flex;gap:10px;align-items:flex-start}
-.form-listbox{width:100%;height:100px}
+        /* Label luôn cùng bề rộng, căn phải trên desktop */
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            text-align: right
+        }
 
-/* Nút */
-.btn{display:inline-block;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;text-decoration:none;transition:all .2s;border:none}
-.btn-primary{background-color:#0b57d0;color:#fff}
-.btn-primary:hover{background:#0949ae}
-.btn-quaylai{background:#dadce0;color:#202124}
-.btn-quaylai:hover{background:#c0c4c8}
+        /* Ô nhập chiếm phần còn lại, không tràn */
+        .form-input-control {
+            min-width: 0
+        }
 
-.form-buttons{grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:25px}
-.note-red{color:#d32f2f;font-size:12px;margin-top:5px}
+        /* Input/Select/Textarea đồng bộ chiều cao – không chồng chéo */
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background: #f9f9f9;
+            transition: all .2s;
+            line-height: 1.4
+        }
 
-/* Mobile: 1 cột, label căn trái để tránh chồng */
-@media (max-width:768px){
-  .form-grid{grid-template-columns:1fr}
-  .form-field,.form-field-full-width .form-field-inner,
-  .file-upload-row,.file-list-row{grid-template-columns:1fr}
-  .form-label{text-align:left}
-}
+            .form-input:focus, .form-select:focus, .form-textarea:focus {
+                outline: none;
+                border-color: #0b57d0;
+                box-shadow: 0 0 0 2px rgba(11,87,208,.2);
+                background: #fff
+            }
 
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px
+        }
+
+        /* Select có mũi tên, chừa padding phải để không đè chữ */
+        .form-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23333" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px
+        }
+
+        /* Radio cùng hàng, không vỡ layout */
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 20px
+        }
+
+        .radio-list td {
+            padding: 0;
+            white-space: nowrap
+        }
+
+        .radio-list label {
+            margin-right: 20px
+        }
+
+        /* Hàng upload/file list cũng theo 2 cột 120px + 1fr */
+        .file-upload-row, .file-list-row {
+            display: grid;
+            grid-template-columns: 120px minmax(0,1fr);
+            align-items: center;
+            gap: 15px
+        }
+
+        .file-upload-main-container {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .file-upload-custom {
+            display: flex;
+            align-items: center;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            background: #f9f9f9;
+            height: 40px
+        }
+
+        .file-input-hidden {
+            position: absolute;
+            left: -9999px
+        }
+
+        .file-upload-label {
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 16px;
+            background: #e8e8e8;
+            border-right: 1px solid #dcdcdc;
+            border-radius: 8px 0 0 8px;
+            font-weight: 600;
+            cursor: pointer
+        }
+
+        .file-chosen-text {
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 12px;
+            color: #777
+        }
+
+        .file-list-control-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start
+        }
+
+        .form-listbox {
+            width: 100%;
+            height: 100px
+        }
+
+        /* Nút */
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all .2s;
+            border: none
+        }
+
+        .btn-primary {
+            background-color: #0b57d0;
+            color: #fff
+        }
+
+            .btn-primary:hover {
+                background: #0949ae
+            }
+
+        .btn-quaylai {
+            background: #dadce0;
+            color: #202124
+        }
+
+            .btn-quaylai:hover {
+                background: #c0c4c8
+            }
+
+        .form-buttons {
+            grid-column: 1/-1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px
+        }
+
+        .note-red {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px
+        }
+
+        /* Mobile: 1 cột, label căn trái để tránh chồng */
+        @media (max-width:768px) {
+            .form-grid {
+                grid-template-columns: 1fr
+            }
+
+            .form-field, .form-field-full-width .form-field-inner,
+            .file-upload-row, .file-list-row {
+                grid-template-columns: 1fr
+            }
+
+            .form-label {
+                text-align: left
+            }
+        }
     </style>
 
     <!-- jQuery UI datepicker (giống NhậpNDCV) -->
@@ -142,11 +335,11 @@
                 </div>
             </div>
 
-            <!-- Loại CV -->
+            <!-- Loại công văn -->
             <div class="form-field">
                 <asp:Label ID="lblLoaiCV" runat="server" Text="Loại công văn:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-                    <asp:DropDownList ID="ddlLoaiCV" runat="server" CssClass="form-select">
+                    <asp:DropDownList ID="ddlLoaiCV" runat="server" CssClass="form-select" Enabled="false">
                         <asp:ListItem Text="-- Chọn loại công văn  --" Value="" />
                     </asp:DropDownList>
                     <asp:RequiredFieldValidator ID="rfvLoaiCV" runat="server"
@@ -154,7 +347,6 @@
                         ErrorMessage="* Chọn công văn" CssClass="note-red" />
                 </div>
             </div>
-
             <!-- Ngày ban hành -->
             <div class="form-field">
                 <asp:Label ID="lblNgayBanHanh" runat="server" Text="Ngày ban hành:" CssClass="form-label"></asp:Label>
@@ -179,6 +371,7 @@
                 </div>
             </div>
 
+
             <!-- Đơn vị nhận -->
             <div class="form-field">
                 <asp:Label ID="lblDonViNhan" runat="server" Text="Đơn vị nhận:" CssClass="form-label"></asp:Label>
@@ -188,6 +381,7 @@
                     </asp:DropDownList>
                 </div>
             </div>
+
 
             <!-- Người ký -->
             <div class="form-field">
