@@ -25,7 +25,7 @@ namespace QLCVan
             }
         }
 
-        // tên bảng động
+        // tên bảng động (đề phòng DB khác tên)
         private string T_NOIDUNGCV
         {
             get { return ViewState["T_NOIDUNGCV"] as string; }
@@ -44,7 +44,7 @@ namespace QLCVan
             set { ViewState["T_FILE"] = value; }
         }
 
-        // GIÁ TRỊ GỐC (để giữ lại khi lưu)
+        // GIÁ TRỊ GỐC để giữ lại khi lưu (dropdown bị khoá)
         private string OrigMaLoaiCV
         {
             get { return ViewState["OrigMaLoaiCV"] as string; }
@@ -57,7 +57,16 @@ namespace QLCVan
             set { ViewState["OrigNoiNhan"] = value; }
         }
 
-        /* ========== Helpers chung ========== */
+        // Chủ sở hữu công văn (MaNguoiGui trong tblNoiDungCV)
+        private string OwnerUser
+        {
+            get { return ViewState["OwnerUser"] as string; }
+            set { ViewState["OwnerUser"] = value; }
+        }
+
+        /* =========================================
+         * Helpers chung
+         * ========================================= */
 
         private object DbNullIfEmpty(string s)
         {
@@ -127,7 +136,155 @@ namespace QLCVan
             return string.IsNullOrEmpty(macv) ? null : macv.Trim();
         }
 
-        /* ========== Resolve bảng thật trong DB ========== */
+        /* =========================================
+         * Hỗ trợ xác thực & phân quyền
+         * ========================================= */
+
+        // Lấy ID người dùng hiện tại (ưu tiên các session phổ biến)
+        private string GetCurrentUserId()
+        {
+            if (Session["MaNguoiGui"] != null && !string.IsNullOrWhiteSpace(Session["MaNguoiGui"].ToString()))
+                return Session["MaNguoiGui"].ToString().Trim();
+
+            if (Session["TenDN"] != null && !string.IsNullOrWhiteSpace(Session["TenDN"].ToString()))
+                return Session["TenDN"].ToString().Trim();
+
+            if (Session["MaNhanVien"] != null && !string.IsNullOrWhiteSpace(Session["MaNhanVien"].ToString()))
+                return Session["MaNhanVien"].ToString().Trim();
+
+            return "";
+        }
+
+        // Kiểm tra xem user hiện tại có trong tblGuiNhan không (được giao/xử lý công văn)
+        // Cho phép match theo MaNguoiNhan (nvarchar) hoặc MaNguoiDung (int)
+        private bool IsUserInGuiNhan(string maCV)
+        {
+            string currentUser = GetCurrentUserId();
+            if (string.IsNullOrWhiteSpace(currentUser)) return false;
+
+            int asInt;
+            bool hasInt = int.TryParse(currentUser, out asInt);
+
+            using (var conn = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(
+                @"SELECT COUNT(*) 
+                  FROM dbo.tblGuiNhan 
+                  WHERE MaCV = @MaCV
+                    AND (
+                          MaNguoiNhan = @MaNguoiNhan
+                       OR (@HasInt = 1 AND MaNguoiDung = @MaNguoiDung)
+                    );", conn))
+            {
+                cmd.Parameters.AddWithValue("@MaCV", maCV);
+                cmd.Parameters.AddWithValue("@MaNguoiNhan", currentUser ?? "");
+                cmd.Parameters.AddWithValue("@HasInt", hasInt ? 1 : 0);
+                cmd.Parameters.AddWithValue("@MaNguoiDung", hasInt ? asInt : 0);
+
+                conn.Open();
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
+        // User có quyền cao hơn 'User'?
+        private bool IsElevated()
+        {
+            if (Session["QuyenHan"] == null) return true; // nếu không có gán quyền, coi như không chặn
+            string role = Session["QuyenHan"].ToString().Trim();
+            return !role.Equals("User", StringComparison.OrdinalIgnoreCase);
+        }
+
+        // Quyết định cuối cùng: người này có quyền chỉnh sửa công văn MaCV hay không?
+        private bool CanCurrentUserEdit(string maCV)
+        {
+            string currentUser = GetCurrentUserId();
+            string owner = OwnerUser == null ? "" : OwnerUser.Trim();
+
+            bool sameOwner = string.Equals(currentUser, owner, StringComparison.OrdinalIgnoreCase);
+            bool involved = IsUserInGuiNhan(maCV);
+            bool elevated = IsElevated();
+
+            bool allow = sameOwner || involved || elevated;
+
+            // debug dev -> console (F12), không quấy user
+            string debugJs =
+                "console.log('[SuaCV DEBUG] currentUser=" + HttpUtility.JavaScriptStringEncode(currentUser) +
+                " | owner=" + HttpUtility.JavaScriptStringEncode(owner) +
+                " | sameOwner=" + sameOwner.ToString() +
+                " | involved=" + involved.ToString() +
+                " | elevated=" + elevated.ToString() +
+                " | allow=" + allow.ToString() + "');";
+
+            if (Page != null && ScriptManager.GetCurrent(Page) != null)
+                ScriptManager.RegisterStartupScript(this, GetType(), "dbgAuth", debugJs, true);
+            else
+                ClientScript.RegisterStartupScript(GetType(), "dbgAuth", debugJs, true);
+
+            return allow;
+        }
+
+        // Nếu không có quyền => khoá UI
+        private void LockEditingForUnauthorizedUser()
+        {
+            txttieude.Enabled = false;
+            txtsocv.Enabled = false;
+            txtcqbh.Enabled = false;
+            txttrichyeu.Enabled = false;
+            txtNguoiKy.Enabled = false;
+            txtGhiChu.Enabled = false;
+
+            txtngaybanhanh.Enabled = false;
+            txtngaygui.Enabled = false;
+
+            RadioButtonList1.Enabled = false;
+
+            FileUpload1.Enabled = false;
+            btnUp.Enabled = false;
+            btnDelete.Enabled = false;
+            ListBox1.Enabled = false;
+
+            ddlLoaiCV.Enabled = false;
+            ddlDonViNhan.Enabled = false;
+
+            btnSave.Enabled = false;
+
+            string debugJs = "console.warn('[SuaCV] Form bị khóa vì không đủ quyền chỉnh sửa');";
+            if (Page != null && ScriptManager.GetCurrent(Page) != null)
+                ScriptManager.RegisterStartupScript(this, GetType(), "warnLock", debugJs, true);
+            else
+                ClientScript.RegisterStartupScript(GetType(), "warnLock", debugJs, true);
+        }
+
+        // Nếu có quyền => bật lại các control cần chỉnh sửa (trừ dropdown cấm đổi)
+        private void UnlockForAuthorizedUser()
+        {
+            txttieude.Enabled = true;
+            txtsocv.Enabled = true;
+            txtcqbh.Enabled = true;
+            txttrichyeu.Enabled = true;
+            txtNguoiKy.Enabled = true;
+            txtGhiChu.Enabled = true;
+
+            txtngaybanhanh.Enabled = true;
+            txtngaygui.Enabled = true;
+
+            RadioButtonList1.Enabled = true;
+
+            FileUpload1.Enabled = true;
+            btnUp.Enabled = true;
+            btnDelete.Enabled = true;
+            ListBox1.Enabled = true;
+
+            // 2 dropdown nhạy cảm vẫn phải khóa theo nghiệp vụ
+            ddlLoaiCV.Enabled = false;
+            ddlDonViNhan.Enabled = false;
+
+            btnSave.Enabled = true;
+        }
+
+        /* =========================================
+         * Resolve bảng thật trong DB (phòng khác tên)
+         * ========================================= */
 
         private string ResolveTable(SqlConnection conn, string[] candidates)
         {
@@ -210,7 +367,9 @@ namespace QLCVan
             }
         }
 
-        /* ========== Bind dropdowns ========== */
+        /* =========================================
+         * Bind dropdowns
+         * ========================================= */
 
         private void BindLoaiCV()
         {
@@ -288,14 +447,16 @@ namespace QLCVan
             }
         }
 
-        /* ========== Load dữ liệu CV lên form ========== */
+        /* =========================================
+         * Load dữ liệu CV lên form
+         * ========================================= */
 
         private void LoadForEdit(string maCV)
         {
             using (var conn = new SqlConnection(ConnStr))
             using (var cmd = new SqlCommand(
                 "SELECT MaCV, TieuDeCV, SoCV, CoQuanBanHanh, TrichYeuND, NguoiKy, GhiChu," +
-                "       NgayBanHanh, NgayGui, MaLoaiCV, GuiHayNhan, NoiNhan " +
+                "       NgayBanHanh, NgayGui, MaLoaiCV, GuiHayNhan, NoiNhan, MaNguoiGui " +
                 "FROM " + T_NOIDUNGCV + " WHERE MaCV = @MaCV;", conn))
             {
                 cmd.Parameters.AddWithValue("@MaCV", maCV);
@@ -310,12 +471,12 @@ namespace QLCVan
                     }
 
                     // text fields
-                    txttieude.Text = Convert.ToString(rd["TieuDeCV"]);
-                    txtsocv.Text = Convert.ToString(rd["SoCV"]);
-                    txtcqbh.Text = Convert.ToString(rd["CoQuanBanHanh"]);
+                    txttieude.Text   = Convert.ToString(rd["TieuDeCV"]);
+                    txtsocv.Text     = Convert.ToString(rd["SoCV"]);
+                    txtcqbh.Text     = Convert.ToString(rd["CoQuanBanHanh"]);
                     txttrichyeu.Text = Convert.ToString(rd["TrichYeuND"]);
-                    txtNguoiKy.Text = Convert.ToString(rd["NguoiKy"]);
-                    txtGhiChu.Text = Convert.ToString(rd["GhiChu"]);
+                    txtNguoiKy.Text  = Convert.ToString(rd["NguoiKy"]);
+                    txtGhiChu.Text   = Convert.ToString(rd["GhiChu"]);
 
                     // dates
                     txtngaybanhanh.Text = (rd["NgayBanHanh"] is DBNull)
@@ -326,9 +487,9 @@ namespace QLCVan
                         ? ""
                         : ((DateTime)rd["NgayGui"]).ToString("yyyy-MM-dd");
 
-                    // ===== Loại CV =====
+                    // ===== Loại CV (giá trị gốc) =====
                     string maLoai = rd["MaLoaiCV"] is DBNull ? "" : rd["MaLoaiCV"].ToString().Trim();
-                    OrigMaLoaiCV = maLoai; // giữ bản gốc để save
+                    OrigMaLoaiCV = maLoai;
                     if (!string.IsNullOrEmpty(maLoai))
                     {
                         ListItem itLoai = ddlLoaiCV.Items.FindByValue(maLoai);
@@ -339,16 +500,15 @@ namespace QLCVan
                         }
                         else
                         {
-                            // loại bị xóa khỏi danh mục
                             ddlLoaiCV.Items.Add(new ListItem("(Loại đã xóa) " + maLoai, maLoai));
                             ddlLoaiCV.ClearSelection();
                             ddlLoaiCV.SelectedValue = maLoai;
                         }
                     }
 
-                    // ===== Đơn vị nhận =====
+                    // ===== Đơn vị nhận (giá trị gốc) =====
                     string maDonVi = rd["NoiNhan"] is DBNull ? "" : rd["NoiNhan"].ToString().Trim();
-                    OrigNoiNhan = maDonVi; // giữ bản gốc để save
+                    OrigNoiNhan = maDonVi;
                     if (!string.IsNullOrEmpty(maDonVi))
                     {
                         ListItem itDV = ddlDonViNhan.Items.FindByValue(maDonVi);
@@ -359,37 +519,61 @@ namespace QLCVan
                         }
                         else
                         {
-                            // đơn vị không còn trong tblDonVi → vẫn add tạm cho người dùng nhìn
                             ddlDonViNhan.Items.Add(new ListItem("(Đơn vị đã xóa) " + maDonVi, maDonVi));
                             ddlDonViNhan.ClearSelection();
                             ddlDonViNhan.SelectedValue = maDonVi;
                         }
                     }
 
-                    // GuiHayNhan
+                    // GuiHayNhan (0 / 1)
                     int guiNhan = (rd["GuiHayNhan"] is DBNull) ? 1 : Convert.ToInt32(rd["GuiHayNhan"]);
                     RadioButtonList1.SelectedValue = (guiNhan == 1) ? "Gui" : "Nhan";
+
+                    // Chủ sở hữu = MaNguoiGui
+                    OwnerUser = rd["MaNguoiGui"] is DBNull
+                        ? ""
+                        : rd["MaNguoiGui"].ToString().Trim();
                 }
             }
 
             // file đính kèm
             BindFileList(maCV);
 
-            // QUAN TRỌNG: KHÓA 2 dropdown NÀY LUÔN
+            // khoá dropdown nhạy cảm luôn
             ddlLoaiCV.Enabled = false;
             ddlDonViNhan.Enabled = false;
+
+            // phân quyền
+            if (!CanCurrentUserEdit(maCV))
+            {
+                LockEditingForUnauthorizedUser();
+            }
+            else
+            {
+                UnlockForAuthorizedUser();
+            }
         }
 
-        /* ========== Page_Load ========== */
+        /* =========================================
+         * Page_Load
+         * ========================================= */
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["TenDN"] == null)
+            // nếu chưa đăng nhập -> đá ra
+            if (Session["TenDN"] == null
+             && Session["MaNguoiGui"] == null
+             && Session["MaNhanVien"] == null)
             {
                 Response.Redirect("Gioithieu.aspx");
                 return;
             }
 
+            // nếu QuyenHan = User thì vẫn được vào trang,
+            // nhưng sau này CanCurrentUserEdit sẽ quyết định có sửa được hay không.
+            // Tuy nhiên nếu bạn MUỐN block hẳn User khỏi trang sửa luôn,
+            // bỏ comment 4 dòng dưới:
+            /*
             if (Session["QuyenHan"] != null &&
                 Session["QuyenHan"].ToString().Trim().Equals("User", StringComparison.OrdinalIgnoreCase))
             {
@@ -401,6 +585,7 @@ namespace QLCVan
                 );
                 return;
             }
+            */
 
             try
             {
@@ -421,16 +606,18 @@ namespace QLCVan
                     return;
                 }
 
-                // 1. bind dropdown
+                // bind dropdown
                 BindLoaiCV();
                 BindDonViNhan();
 
-                // 2. load data CV (set selected + ghi nhớ giá trị gốc + disable dropdown)
+                // load data CV + phân quyền
                 LoadForEdit(macv);
             }
         }
 
-        /* ========== Save / Update ========== */
+        /* =========================================
+         * Save / Update
+         * ========================================= */
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
@@ -438,6 +625,13 @@ namespace QLCVan
             if (string.IsNullOrEmpty(macv))
             {
                 Alert("Thiếu mã công văn trên URL (macv). Vui lòng mở từ nút Sửa.");
+                return;
+            }
+
+            // chặn post tay từ người không có quyền
+            if (!CanCurrentUserEdit(macv))
+            {
+                Alert("Bạn không có quyền sửa công văn này.");
                 return;
             }
 
@@ -455,10 +649,10 @@ namespace QLCVan
                 return;
             }
 
-            // file upload tạm thời
+            // đưa file upload tạm vào ListBox1 (chưa ghi DB)
             HandleFileUploadToListBox();
 
-            // Gửi / Nhận
+            // gửi / nhận
             int guiHayNhan = 1;
             string sel = (RadioButtonList1.SelectedValue ?? "").Trim();
             if (string.Compare(sel, "Nhan", StringComparison.OrdinalIgnoreCase) == 0)
@@ -466,7 +660,7 @@ namespace QLCVan
                 guiHayNhan = 0;
             }
 
-            // LẤY GIÁ TRỊ GỐC, KHÔNG LẤY TỪ DROPDOWN (vì dropdown disable, user không được đổi)
+            // GIỮ NGUYÊN GIÁ TRỊ GỐC dropdown (vì dropdown disable)
             object maLoaiParam = DBNull.Value;
             int maLoaiInt;
             if (int.TryParse(OrigMaLoaiCV, out maLoaiInt))
@@ -502,12 +696,11 @@ namespace QLCVan
                     cmd.Parameters.AddWithValue("@NguoiKy", DbNullIfEmpty(txtNguoiKy.Text));
                     cmd.Parameters.AddWithValue("@GhiChu", DbNullIfEmpty(txtGhiChu.Text));
 
-                    cmd.Parameters.Add("@NgayBanHanh", SqlDbType.Date).Value =
+                    cmd.Parameters.Add("@NgayBanHanh", SqlDbType.DateTime).Value =
                         (object)ngayBanHanh ?? DBNull.Value;
-                    cmd.Parameters.Add("@NgayGui", SqlDbType.Date).Value =
+                    cmd.Parameters.Add("@NgayGui", SqlDbType.DateTime).Value =
                         (object)ngayGui ?? DBNull.Value;
 
-                    // giữ nguyên giá trị gốc
                     cmd.Parameters.Add("@MaLoaiCV", SqlDbType.Int).Value = maLoaiParam;
                     cmd.Parameters.AddWithValue("@NoiNhan", DbNullIfEmpty(noiNhanSave));
 
@@ -530,13 +723,15 @@ namespace QLCVan
                 return;
             }
 
-            // sync file đính kèm
+            // đồng bộ danh sách file đính kèm từ ListBox1 -> DB
             SaveFileListToDb(macv);
 
             AlertAndGo("Đã lưu công văn.", "Trangchu.aspx");
         }
 
-        /* ========== File handling ========== */
+        /* =========================================
+         * File handling
+         * ========================================= */
 
         private void HandleFileUploadToListBox()
         {
@@ -590,6 +785,7 @@ namespace QLCVan
                         if (li == null || string.IsNullOrWhiteSpace(li.Text))
                             continue;
 
+                        // tránh insert trùng
                         using (var check = new SqlCommand(
                             "SELECT COUNT(*) FROM " + T_FILE + " WHERE MaCV=@MaCV AND TenFile=@TenFile;", conn))
                         {
@@ -601,6 +797,7 @@ namespace QLCVan
                                 continue;
                         }
 
+                        // thêm file mới
                         using (var insert = new SqlCommand(
                             "INSERT INTO " + T_FILE + @" (FileID, MaCV, TenFile, Url, DateUpload)
                              VALUES (@FileID, @MaCV, @TenFile, @Url, @DateUpload);", conn))
@@ -622,7 +819,9 @@ namespace QLCVan
             }
         }
 
-        /* ========== Buttons ========== */
+        /* =========================================
+         * Các nút
+         * ========================================= */
 
         protected void btnBack_Click(object sender, EventArgs e)
         {
@@ -649,6 +848,7 @@ namespace QLCVan
 
             if (!anySelected)
             {
+                // hành vi cũ: nếu không tick chọn file nào mà vẫn bấm Xóa → clear hết
                 ListBox1.Items.Clear();
             }
         }
