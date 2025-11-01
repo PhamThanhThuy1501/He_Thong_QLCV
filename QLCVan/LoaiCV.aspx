@@ -52,12 +52,11 @@
 
         /* Tiêu đề trang */
         .page-title { 
-          text-align: center; 
-          font-size: 26px; 
-          letter-spacing: .6px; 
-          margin: 8px 0 18px;    
-          color: var(--ink); 
-          font-weight:800; 
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #111;
+            margin: 25px 0 20px 0;
         }
 
         /* Thanh tìm kiếm + nút thêm */

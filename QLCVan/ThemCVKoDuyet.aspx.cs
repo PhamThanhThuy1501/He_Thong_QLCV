@@ -135,7 +135,7 @@ namespace QLCVan
                 NguoiKy = txtNguoiKy.Text.Trim(),
                 GhiChu = txtGhiChu.Text.Trim(),
                 // TrangThai: theo logic cũ NhapNDCV
-                TrangThai = !((Session["TenDN"] + "").Equals("quyen", StringComparison.OrdinalIgnoreCase)),
+                TrangThai = "Đang trình",
                 GuiHayNhan = (rblBaoMat.SelectedValue == "1" ? 1 : 0) // tái dụng field theo cách cũ (nếu DB đang dùng)
             };
 

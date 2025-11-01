@@ -12,6 +12,10 @@ namespace QLCVan
         InfoDataContext db = new InfoDataContext();
         protected void Page_Load(object sender, EventArgs e)
         {
+            if ((Session["TenDN"] == null))
+            {
+                Response.Redirect("Dangnhap.aspx");
+            }
             if (!IsPostBack)
             {
 
@@ -66,27 +70,67 @@ namespace QLCVan
 
         protected void gvGanQuyen_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "ToggleQuyen")
+            if (e.CommandName != "ToggleQuyen") return;
+
+            string maQuyen = e.CommandArgument.ToString();
+            string maNhom = hdfMaNhom.Value;
+
+            // Lấy TÊN quyền theo mã (fallback về mã nếu không tìm thấy)
+            string tenQuyen = db.tblQuyens
+                                .Where(q => q.MaQuyen == maQuyen)
+                                .Select(q => q.TenQuyen)
+                                .FirstOrDefault() ?? maQuyen;
+
+            try
             {
-                string maQuyen = e.CommandArgument.ToString();
-                string maNhom = hdfMaNhom.Value;
-                var quyen = db.tblNhomQuyen_tblQuyens.FirstOrDefault(x => x.MaNhomQuyen == maNhom && x.MaQuyen == maQuyen);
+                var quyen = db.tblNhomQuyen_tblQuyens
+                              .FirstOrDefault(x => x.MaNhomQuyen == maNhom && x.MaQuyen == maQuyen);
+
+                bool added;
                 if (quyen == null)
                 {
-                    var newRow = new tblNhomQuyen_tblQuyen
+                    db.tblNhomQuyen_tblQuyens.InsertOnSubmit(new tblNhomQuyen_tblQuyen
                     {
                         MaNhomQuyen = maNhom,
                         MaQuyen = maQuyen,
-                    };
-                    db.tblNhomQuyen_tblQuyens.InsertOnSubmit(newRow);
+                    });
+                    added = true;
                 }
                 else
                 {
                     db.tblNhomQuyen_tblQuyens.DeleteOnSubmit(quyen);
+                    added = false;
                 }
+
                 db.SubmitChanges();
                 LoadData(maNhom);
+                PermissionHelper.ReSyncPermission();
+
+                var actionText = added ? "đã gán" : "đã bỏ gán";
+                // lblTenNhom: label hiển thị TÊN NHÓM QUYỀN trên trang
+                ShowMessage($"[{tenQuyen}] {actionText} cho nhóm quyền {lblTenNhom.Text} thành công.", false);
             }
+            catch (Exception ex)
+            {
+                ShowMessage("Có lỗi khi cập nhật quyền: " + ex.Message, true);
+            }
+        }
+        // Helper hiển thị thông báo (ưu tiên toast nếu có window.showToast; fallback alert)
+        private void ShowMessage(string message, bool isError)
+        {
+            string safe = (message ?? "").Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", " ").Replace("\n", " ");
+            string level = isError ? "error" : "success";
+
+            string js = $@"
+                (function() {{
+                    if (window.showToast) {{
+                        window.showToast('{safe}', '{level}');
+                    }} else {{
+                        alert('{safe}');
+                    }}
+                }})();";
+
+            ScriptManager.RegisterStartupScript(this, GetType(), Guid.NewGuid().ToString(), js, true);
         }
 
         protected void gvGanQuyen_PageIndexChanging(object sender, GridViewPageEventArgs e)

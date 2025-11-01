@@ -11,7 +11,7 @@ namespace QLCVan
 {
 
 
-    public partial class QLNguoiDung
+    public partial class QLnguoidung
     {
 
         /// <summary>

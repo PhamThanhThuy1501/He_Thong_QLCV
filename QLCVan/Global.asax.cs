@@ -27,16 +27,23 @@ namespace QLCVan
         {
 
             Session["User"] = "";
-            Application["HitOnline"] = int.Parse(Application["HitOnline"].ToString()) + 1;
             Application.Lock();
-            Application["HitCount"] = int.Parse(Application["HitCount"].ToString()) + 1;
 
-            StreamWriter sw = new StreamWriter(Server.MapPath(@"Counter.txt"));
-            sw.Write(Application["HitCount"]);
-            sw.Close();
-            sw.Dispose();
+            int hitOnline = 0;
+            int hitCount = 0;
+
+            // Bảo vệ trường hợp null hoặc không đúng định dạng
+            if (Application["HitOnline"] != null)
+                int.TryParse(Application["HitOnline"].ToString(), out hitOnline);
+
+            if (Application["HitCount"] != null)
+                int.TryParse(Application["HitCount"].ToString(), out hitCount);
+
+            Application["HitOnline"] = hitOnline + 1;
+            Application["HitCount"] = hitCount + 1;
 
             Application.UnLock();
+
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)

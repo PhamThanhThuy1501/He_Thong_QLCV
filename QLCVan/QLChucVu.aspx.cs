@@ -50,32 +50,50 @@ namespace QLCVan
 
             if (string.IsNullOrEmpty(ma) || string.IsNullOrEmpty(ten))
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Mã và Tên chức vụ không được để trống!');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "addEmpty",
+                       "showToast('Mã và Tên chức vụ không được để trống!', 'text-bg-danger');", true);
                 return;
             }
 
             if (db.tblChucVus.Any(x => x.MaChucVu == ma))
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Mã chức vụ đã tồn tại!');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "addcheckma",
+                    "showToast('Mã chức vụ đã tồn tại!','text-bg-danger');", true);
                 return;
             }
 
-            tblChucVu cv = new tblChucVu
-            {
-                MaChucVu = ma,
-                TenChucVu = ten
-            };
-
+            var cv = new tblChucVu { MaChucVu = ma, TenChucVu = ten };
             db.tblChucVus.InsertOnSubmit(cv);
             db.SubmitChanges();
             LoadData();
 
             txtMdMaChucVu.Text = txtMdTenChucVu.Text = "";
-            ScriptManager.RegisterStartupScript(this, GetType(), "hideModal",
-                "bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();", true);
+
+            // Đóng modal an toàn + hiện toast
+            ScriptManager.RegisterStartupScript(this, GetType(), "addOk",
+            @"
+    (function(){
+      var el = document.getElementById('addModal');
+      if (el) {
+        var md = (bootstrap.Modal.getInstance ? bootstrap.Modal.getInstance(el) : null);
+        try {
+          if (!md && bootstrap.Modal.getOrCreateInstance) {
+            md = bootstrap.Modal.getOrCreateInstance(el);
+          } else if (!md) {
+            md = new bootstrap.Modal(el);
+          }
+          md && md.hide();
+        } catch(e) {}
+      }
+      if (typeof showToast === 'function') {
+        showToast('Thêm thành công', 'text-bg-success');
+      } else {
+        console.log('Toast: Thêm thành công'); // fallback
+      }
+    })();
+    ", true);
         }
+
 
         protected void btnConfirmDelete_Click(object sender, EventArgs e)
         {
@@ -84,21 +102,51 @@ namespace QLCVan
 
             if (hasChild)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Không thể xóa chức vụ vì vẫn còn nhóm quyền được gán.');", true);
+                // Gợi ý: dùng toast lỗi thay cho alert
+                ScriptManager.RegisterStartupScript(this, GetType(), "delFailChild",
+                    "showToast('Không thể xoá: Chức vụ còn nhóm quyền được gán.', 'text-bg-danger');", true);
                 return;
             }
+
             if (!string.IsNullOrEmpty(ma))
             {
                 var item = db.tblChucVus.FirstOrDefault(x => x.MaChucVu == ma);
                 if (item != null)
                 {
-                    db.tblChucVus.DeleteOnSubmit(item);
-                    db.SubmitChanges();
+                    try
+                    {
+                        db.tblChucVus.DeleteOnSubmit(item);
+                        db.SubmitChanges();
+
+                        // Reload grid
+                        LoadData();
+
+                        // Đóng modal + hiện toast thành công
+                        ScriptManager.RegisterStartupScript(this, GetType(), "delOk",
+                            @"
+                    (function(){
+                      var el = document.getElementById('deleteModal');
+                      var md = bootstrap.Modal.getInstance(el);
+                      if(md){ md.hide(); }
+                      showToast('Đã xoá thành công', 'text-bg-success');
+                    })();
+                    ", true);
+                    }
+                    catch (Exception)
+                    {
+                        // Có người dùng đang gán, hoặc lỗi ràng buộc DB
+                        ScriptManager.RegisterStartupScript(this, GetType(), "delFailRef",
+                            "showToast('Không thể xoá chức vụ vì vẫn còn người dùng được gán.', 'text-bg-danger');", true);
+                    }
                 }
-                LoadData();
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, GetType(), "delNotFound",
+                        "showToast('Không tìm thấy chức vụ để xoá.', 'text-bg-warning');", true);
+                }
             }
         }
+
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
@@ -107,7 +155,9 @@ namespace QLCVan
 
             if (string.IsNullOrEmpty(ma) || string.IsNullOrEmpty(ten))
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Tên chức vụ không được để trống!');", true);
+                // Báo lỗi bằng toast (có thể thay bằng alert nếu bạn muốn)
+                ScriptManager.RegisterStartupScript(this, GetType(), "updEmpty",
+                    "showToast('Tên chức vụ không được để trống!', 'text-bg-danger');", true);
                 return;
             }
 
@@ -117,11 +167,37 @@ namespace QLCVan
                 cv.TenChucVu = ten;
                 db.SubmitChanges();
                 LoadData();
+
+                // Đóng modal Sửa + hiện toast thành công
+                ScriptManager.RegisterStartupScript(this, GetType(), "updOk",
+                @"
+        (function(){
+          var el = document.getElementById('editModal');
+          if (el) {
+            var md = (bootstrap.Modal.getInstance ? bootstrap.Modal.getInstance(el) : null);
+            try {
+              if (!md && bootstrap.Modal.getOrCreateInstance) {
+                md = bootstrap.Modal.getOrCreateInstance(el);
+              } else if (!md) {
+                md = new bootstrap.Modal(el);
+              }
+              md && md.hide();
+            } catch(e) {}
+          }
+          if (typeof showToast === 'function') {
+            showToast('Cập nhật thành công', 'text-bg-success');
+          } else {
+            console.log('Toast: Cập nhật thành công');
+          }
+        })();
+        ", true);
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Không tìm thấy chức vụ.');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "updNotFound",
+                    "showToast('Không tìm thấy chức vụ.', 'text-bg-warning');", true);
             }
         }
+
     }
 }

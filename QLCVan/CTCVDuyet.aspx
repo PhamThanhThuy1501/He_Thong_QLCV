@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/QLCV.Master"  CodeBehind="CTCVKhongDuyetDaGui.aspx.cs" Inherits="QLCVan.CTCVKhongDuyetDaGui"  %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/QLCV.Master"  CodeBehind="CTCVDuyet.aspx.cs" Inherits="QLCVan.CTCVDuyet"   %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
   <!-- Bootstrap + Font Awesome -->
@@ -60,7 +60,7 @@
     .cv-badge{
       position:absolute;
       right:22px;top:14px;
-      background:red;
+      background:#f9b200;
       color:#fff;
       border-radius:20px;
       padding:8px 16px;
@@ -142,17 +142,22 @@
     }
     .btn-ghost:hover { background: #e2e8f0; }
     .btn-info {
-      background: #0dcaf0;  /* xanh nhạt */
-      color: #000;
-      border: 1px solid #0bb5d8;
+     background: #0d6efd;  /* xanh đậm */
+color: #fff;
+border: 1px solid #0b5ed7;
     }
-    .btn-info:hover { background: #31d2f2; }
+    .btn-info:hover {
+  background: #0d6efd !important;  /* cùng màu với bình thường */
+  color: #fff !important;
+  border-color: #0b5ed7 !important;
+}
+    
     .btn-primary {
       background: #0d6efd;  /* xanh đậm */
       color: #fff;
       border: 1px solid #0b5ed7;
     }
-    .btn-primary:hover { background: #0b5ed7; }
+    
 
   </style>
 
@@ -170,20 +175,19 @@
   <!-- ===== Nội dung công văn ===== -->
   <div class="cv-wrap">
     <div class="cv-card">
-      <div class="cv-head">
-        <h5 class="cv-title">CHI TIẾT CÔNG VĂN</h5>
-        <!--<span class="cv-badge" style="background-color: green;">Đã Gửi</span>-->
-        <asp:Label ID="lblTrangThai" runat="server" CssClass="cv-badge"></asp:Label>
-      </div>
+        <div class="cv-head">
+            <h5 class="cv-title">CHI TIẾT CÔNG VĂN</h5>
+            <asp:Label ID="lblTrangThai" runat="server" CssClass="cv-badge"></asp:Label>
+        </div>
 
-        <div class="cv-body">
-            <div class="grid2">
-                <div class="row-full field">
-                    <div class="lbl">Tiêu đề:</div>
-                    <div class="ctl">
-                        <asp:TextBox ID="txtTieuDe" runat="server" CssClass="ipt" Width="100%" Enabled="False" placeholder="Tiêu đề văn bản"></asp:TextBox>
-                    </div>
+      <div class="cv-body">
+        <div class="grid2">
+          <div class="row-full field">
+                <div class="lbl">Tiêu đề:</div>
+                <div class="ctl">
+                    <asp:TextBox ID="txtTieuDe" runat="server" CssClass="ipt" Width="100%" Enabled="False" placeholder="Tiêu đề văn bản"></asp:TextBox>
                 </div>
+            </div>
 
             <div class="field">
                 <div class="lbl">Số CV:</div>
@@ -201,16 +205,12 @@
 
             <div class="field">
                 <div class="lbl">Ngày ban hành:</div>
-                <div class="ctl">
-                    <asp:TextBox ID="txtNgayBH" runat="server" CssClass="ipt" Enabled="False"></asp:TextBox>
-                </div>
+                <asp:TextBox ID="txtNgayBH" runat="server" CssClass="ipt" Enabled="False"></asp:TextBox>
             </div>
 
             <div class="field">
                 <div class="lbl">Ngày gửi:</div>
-                <div class="ctl">
-                    <asp:TextBox ID="txtNgaygui" runat="server" CssClass="ipt" Enabled="False"></asp:TextBox>
-                </div>
+                <asp:TextBox ID="txtNgaygui" runat="server" CssClass="ipt" Enabled="False"></asp:TextBox>
             </div>
 
             <div class="field">
@@ -229,15 +229,22 @@
             <div class="field">
                 <div class="lbl">Người ký:</div>
                 <div class="ctl">
-                <asp:TextBox ID="TextNguoiky" runat="server" CssClass="ipt" Enabled="False" placeholder="Người ký"></asp:TextBox>
+                    <asp:TextBox ID="TextNguoiky" runat="server" CssClass="ipt" Enabled="False" placeholder="Người ký"></asp:TextBox>
                 </div>
             </div>
-
+                    
             <div class="field">
                 <div class="lbl">Bảo mật:</div>
                 <div class="ctl radio-wrap">
                     <label><input type="radio" checked disabled> Có</label>
                     <label><input type="radio" disabled> Không</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="lbl">Người duyệt:</div>
+                <div class="ctl select-wrap">
+                    <asp:TextBox ID="TextNguoiduyet" runat="server" CssClass="ipt" Enabled="False" placeholder="Người duyệt"></asp:TextBox>
                 </div>
             </div>
 
@@ -257,7 +264,7 @@
 
             <div class="row-full field">
                 <div class="lbl">Tệp đính kèm:</div>
-                <div class="ctl">
+                <div class="ctl ">
                     <asp:Repeater ID="rptfilecv" runat="server">
                         <ItemTemplate>
                             <div class="file-line" style="margin-bottom:6px;">
@@ -277,10 +284,11 @@
 
         <!-- Nút hành động -->
         <div class="actions">
-          <!--<button type="button" class="btn btn-ghost" onclick=btnQuayLai >Quay lại</button>-->
-           <asp:Button ID="Button1" runat="server" Text="Quay lại" CssClass="btn btn-ghost" OnClick="btnQuayLai" />
-          
-          <button type="button" class="btn btn-primary">Chỉnh sửa</button>
+          <asp:Button ID="BtnQuayLai" runat="server" Text="Quay lại" CssClass="btn btn-ghost" OnClick="btnQuayLai" />
+          <asp:Button ID="BtnKhongDuyet" runat="server" Text="Không duyệt" CssClass="btn btn-primary" OnClick="btnKhongDuyet" />
+          <asp:Button ID="BtnDuyet" runat="server" Text="Duyệt" CssClass="btn btn-primary" OnClick="btnDuyet" />
+          <asp:Button ID="BtnChinhSua" runat="server" Text="Chinh sửa" CssClass="btn btn-primary" OnClick="btnChinhSua" />
+          <asp:Button ID="BtnTrinhLai" runat="server" Text="Trình lại" CssClass="btn btn-primary" OnClick="btnTrinhLai" />
         </div>
       </div>
     </div>

@@ -74,6 +74,7 @@
     <Content Include="ChinhSuaCTCV_Duyet.aspx" />
     <Content Include="Counter.txt" />
     <Content Include="CTCV.aspx" />
+    <Content Include="CTCVDuyet.aspx" />
     <Content Include="DaDuyetCTCV_Duyet.aspx" />
     <Content Include="Dangnhap.aspx" />
     <Content Include="DanhBaEmail.aspx" />
@@ -182,6 +183,20 @@
     </Compile>
     <Content Include="CTCVKhongDuyetDaGui.aspx" />
     <Content Include="CTCVKhongDuyet.aspx" />
+    <Compile Include="CTCVDuyet.aspx.cs">
+      <DependentUpon>CTCVDuyet.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CTCVDuyet.aspx.designer.cs">
+      <DependentUpon>CTCVDuyet.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CTCVKhongDuyetDaGui.aspx.cs">
+      <DependentUpon>CTCVKhongDuyetDaGui.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CTCVKhongDuyetDaGui.aspx.designer.cs">
+      <DependentUpon>CTCVKhongDuyetDaGui.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Dangnhap.aspx.cs">
       <DependentUpon>Dangnhap.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -243,6 +258,7 @@
     <Compile Include="NhapNDCV.aspx.designer.cs">
       <DependentUpon>NhapNDCV.aspx</DependentUpon>
     </Compile>
+    <Compile Include="PermissionHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QLChucVu.aspx.cs">
       <DependentUpon>QLChucVu.aspx</DependentUpon>
@@ -364,7 +380,7 @@
       <LastGenOutput>Info.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="NewQuanLyCongVan.bak" />
+    <Content Include="NewQuanLyCongVan_18_10.bak" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

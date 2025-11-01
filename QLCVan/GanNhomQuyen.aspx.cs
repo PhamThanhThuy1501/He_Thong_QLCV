@@ -65,31 +65,67 @@ namespace QLCVan
 
         protected void gvGanQuyen_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "ToggleQuyen")
-            {
-                string maNhomQuyen = e.CommandArgument.ToString();
-                string maChucVu = hdfMaNhom.Value;
+            if (e.CommandName != "ToggleQuyen") return;
 
+            string maNhomQuyen = e.CommandArgument.ToString();
+            string maChucVu = hdfMaNhom.Value;
+            // Lấy tên nhóm quyền theo mã (nếu không có thì fallback về mã)
+            string tenNhomQuyen = db.tblNhomQuyens
+                                    .Where(n => n.MaNhomQuyen == maNhomQuyen)
+                                    .Select(n => n.TenNhomQuyen)
+                                    .FirstOrDefault() ?? maNhomQuyen;
+
+            try
+            {
                 var existing = db.tblChucVu_tblNhomQuyens
-                                 .FirstOrDefault(x => x.MaChucVu == maChucVu && x.MaNhomQuyen == maNhomQuyen);
+                                .FirstOrDefault(x => x.MaChucVu == maChucVu && x.MaNhomQuyen == maNhomQuyen);
+
+                bool added;
 
                 if (existing == null)
                 {
-                    var newRow = new tblChucVu_tblNhomQuyen
+                    db.tblChucVu_tblNhomQuyens.InsertOnSubmit(new tblChucVu_tblNhomQuyen
                     {
                         MaChucVu = maChucVu,
                         MaNhomQuyen = maNhomQuyen
-                    };
-                    db.tblChucVu_tblNhomQuyens.InsertOnSubmit(newRow);
+                    });
+                    added = true;
                 }
                 else
                 {
                     db.tblChucVu_tblNhomQuyens.DeleteOnSubmit(existing);
+                    added = false;
                 }
 
                 db.SubmitChanges();
                 LoadData(maChucVu);
+                PermissionHelper.ReSyncPermission();
+
+                var actionText = added ? "đã gán" : "đã bỏ gán";
+                ShowMessage($"[{tenNhomQuyen}] {actionText} cho chức vụ {lblTenNhom.Text} thành công.", false);
             }
+            catch (Exception ex)
+            {
+                ShowMessage("Có lỗi khi cập nhật quyền: " + ex.Message, true);
+            }
+        }
+
+        // Helper hiển thị thông báo (ưu tiên toast nếu có window.showToast; fallback alert)
+        private void ShowMessage(string message, bool isError)
+        {
+            string safe = (message ?? "").Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", " ").Replace("\n", " ");
+            string level = isError ? "error" : "success";
+
+            string js = $@"
+                (function() {{
+                    if (window.showToast) {{
+                        window.showToast('{safe}', '{level}');
+                    }} else {{
+                        alert('{safe}');
+                    }}
+                }})();";
+
+            ScriptManager.RegisterStartupScript(this, GetType(), Guid.NewGuid().ToString(), js, true);
         }
 
         protected void gvGanQuyen_PageIndexChanging(object sender, GridViewPageEventArgs e)

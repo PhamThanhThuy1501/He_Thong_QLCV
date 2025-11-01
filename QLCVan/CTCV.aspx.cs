@@ -421,11 +421,8 @@ VALUES (@FileID, @MaCV, @TenFile, @Url, @DateUpload);", conn))
             bool anySelected = false;
             for (int i = ListBox1.Items.Count - 1; i >= 0; i--)
             {
-                if (ListBox1.Items[i].Selected)
-                {
-                    ListBox1.Items.RemoveAt(i);
-                    anySelected = true;
-                }
+                cv1.TrangThai = "Đã duyệt";
+                db.SubmitChanges();
             }
             if (!anySelected) ListBox1.Items.Clear();
         }

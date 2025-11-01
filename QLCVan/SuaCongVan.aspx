@@ -342,14 +342,14 @@
                 <asp:Label ID="lblNgayBanHanh" runat="server" Text="Ngày ban hành:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
                     <asp:TextBox ID="txtngaybanhanh" runat="server" CssClass="form-input" placeholder="dd/mm/yyyy" />
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtngaybanhanh" ErrorMessage="* Nhập ngày ban hành" CssClass="note-red" />
+                    <!--<asp:RequiredFieldValidator runat="server" ControlToValidate="txtngaybanhanh" ErrorMessage="* Nhập ngày ban hành" CssClass="note-red" />-->
                 </div>
             </div>
             <div class="form-field">
                 <asp:Label ID="lblNgayGui" runat="server" Text="Ngày gửi:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
                     <asp:TextBox ID="txtngaygui" runat="server" CssClass="form-input" placeholder="dd/mm/yyyy" />
-                    <asp:RequiredFieldValidator runat="server" ControlToValidate="txtngaygui" ErrorMessage="* Nhập ngày gửi" CssClass="note-red" />
+                    <!--<asp:RequiredFieldValidator runat="server" ControlToValidate="txtngaygui" ErrorMessage="* Nhập ngày gửi" CssClass="note-red" />-->
                 </div>
             </div>
 

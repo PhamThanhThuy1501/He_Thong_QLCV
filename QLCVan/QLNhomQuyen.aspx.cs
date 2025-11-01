@@ -11,6 +11,7 @@ namespace QLCVan
     {
 
         InfoDataContext db = new InfoDataContext();
+        string maQuyenYeuCau = "Q009";
         private void LoadData()
         {
             var list = from nq in db.tblNhomQuyens select nq;
@@ -19,6 +20,15 @@ namespace QLCVan
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if ((Session["TenDN"] == null))
+            {
+                Response.Redirect("Dangnhap.aspx");
+            }
+          /*  if (!PermissionHelper.HasPermission(maQuyenYeuCau))
+            {
+                Response.Write("<script>alert('Bạn không có quyền truy cập trang này!'); window.history.back();</script>");
+                Response.End();
+            }*/
             if (!IsPostBack)
             {
                 LoadData();
@@ -55,8 +65,8 @@ namespace QLCVan
 
             if (string.IsNullOrEmpty(ma) || string.IsNullOrEmpty(ten))
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Mã và Tên nhóm quyền không được để trống!');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "addEmpty",
+                      "showToast('Mã và Tên nhóm quyền không được để trống!', 'text-bg-danger');", true);
                 // Xoá text trong modal
                 txtMdMaNhomQuyen.Text = "";
                 txtMdTenNhomQuyen.Text = "";
@@ -67,8 +77,8 @@ namespace QLCVan
             var exist = db.tblNhomQuyens.FirstOrDefault(x => x.MaNhomQuyen == ma);
             if (exist != null)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Mã nhóm quyền đã tồn tại!');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "addcheckma",
+                    "showToast('Mã  nhóm quyền đã tồn tại!','text-bg-danger');", true);
                 // Xoá text trong modal
                 txtMdMaNhomQuyen.Text = "";
                 txtMdTenNhomQuyen.Text = "";
@@ -91,8 +101,29 @@ namespace QLCVan
             txtMdMaNhomQuyen.Text = "";
             txtMdTenNhomQuyen.Text = "";
 
-            ScriptManager.RegisterStartupScript(this, GetType(), "hideModal",
-                "var modal = bootstrap.Modal.getInstance(document.getElementById('addModal')); if(modal) modal.hide();", true);
+            // Đóng modal an toàn + hiện toast
+            ScriptManager.RegisterStartupScript(this, GetType(), "addOk",
+            @"
+    (function(){
+      var el = document.getElementById('addModal');
+      if (el) {
+        var md = (bootstrap.Modal.getInstance ? bootstrap.Modal.getInstance(el) : null);
+        try {
+          if (!md && bootstrap.Modal.getOrCreateInstance) {
+            md = bootstrap.Modal.getOrCreateInstance(el);
+          } else if (!md) {
+            md = new bootstrap.Modal(el);
+          }
+          md && md.hide();
+        } catch(e) {}
+      }
+      if (typeof showToast === 'function') {
+        showToast('Thêm thành công', 'text-bg-success');
+      } else {
+        console.log('Toast: Thêm thành công'); // fallback
+      }
+    })();
+    ", true);
         }
 
         protected void btnConfirmDelete_Click(object sender, EventArgs e)
@@ -102,8 +133,8 @@ namespace QLCVan
 
             if (hasChild)
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert",
-                    "alert('Không thể xóa nhóm quyền vì vẫn còn quyền được gán.');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "delFailChild",
+                    "showToast('Không thể xóa nhóm quyền vì vẫn còn quyền được gán.', 'text-bg-danger');", true);
                 return;
             }
             if (!string.IsNullOrEmpty(ma))
@@ -111,11 +142,39 @@ namespace QLCVan
                 var item = db.tblNhomQuyens.FirstOrDefault(x => x.MaNhomQuyen == ma);
                 if (item != null)
                 {
-                    db.tblNhomQuyens.DeleteOnSubmit(item);
-                    db.SubmitChanges();
+                    try
+                    {
+                        db.tblNhomQuyens.DeleteOnSubmit(item);
+                        db.SubmitChanges();
+
+                        // Reload grid
+                        LoadData();
+
+                        // Đóng modal + hiện toast thành công
+                        ScriptManager.RegisterStartupScript(this, GetType(), "delOk",
+                            @"
+                    (function(){
+                      var el = document.getElementById('deleteModal');
+                      var md = bootstrap.Modal.getInstance(el);
+                      if(md){ md.hide(); }
+                      showToast('Đã xoá thành công', 'text-bg-success');
+                    })();
+                    ", true);
+                    }
+                    catch (Exception)
+                    {
+                        // Có người dùng đang gán, hoặc lỗi ràng buộc DB
+                        ScriptManager.RegisterStartupScript(this, GetType(), "delFailRef",
+                            "showToast('Không thể xóa nhóm quyền vì vẫn còn quyền được gán.', 'text-bg-danger');", true);
+                    }
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, GetType(), "delNotFound",
+                        "showToast('Không tìm thấy nhóm quyền để xoá.', 'text-bg-warning');", true);
                 }
 
-                LoadData();
+               
             }
         }
 
@@ -126,7 +185,8 @@ namespace QLCVan
 
             if (string.IsNullOrEmpty(ma) || string.IsNullOrEmpty(ten))
             {
-                ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Tên nhóm quyền không được để trống!');", true);
+                ScriptManager.RegisterStartupScript(this, GetType(), "updEmpty",
+                    "showToast('Tên nhóm quyền không được để trống!', 'text-bg-danger');", true);
                 return;
             }
 
@@ -136,13 +196,38 @@ namespace QLCVan
                 {
                     nhom.TenNhomQuyen = ten; // ✅ chỉ update tên
                     db.SubmitChanges();
+                     LoadData();
+
+                // Đóng modal Sửa + hiện toast thành công
+                ScriptManager.RegisterStartupScript(this, GetType(), "updOk",
+                @"
+        (function(){
+          var el = document.getElementById('editModal');
+          if (el) {
+            var md = (bootstrap.Modal.getInstance ? bootstrap.Modal.getInstance(el) : null);
+            try {
+              if (!md && bootstrap.Modal.getOrCreateInstance) {
+                md = bootstrap.Modal.getOrCreateInstance(el);
+              } else if (!md) {
+                md = new bootstrap.Modal(el);
+              }
+              md && md.hide();
+            } catch(e) {}
+          }
+          if (typeof showToast === 'function') {
+            showToast('Cập nhật thành công', 'text-bg-success');
+          } else {
+            console.log('Toast: Cập nhật thành công');
+          }
+        })();
+        ", true);
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, GetType(), "alert", "alert('Không tìm thấy nhóm quyền.');", true);
-                }
+                ScriptManager.RegisterStartupScript(this, GetType(), "updNotFound",
+               "showToast('Không tìm thấy nhóm quyền.', 'text-bg-warning');", true);
+            }
 
-            LoadData(); 
-        }
+                    }
     }
 }

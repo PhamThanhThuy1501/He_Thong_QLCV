@@ -18,13 +18,6 @@ namespace QLCVan
             {
                 Response.Redirect("Gioithieu.aspx");
             }
-            if (Session["QuyenHan"].ToString().Trim() == "User")
-            {
-                Response.Write("<script type='text/javascript'>");
-                Response.Write("alert('Bạn không có quyền truy cập trang này !');");
-                Response.Write("document.location.href='Trangchu.aspx';");
-                Response.Write("</script>");
-            }
 
             if (!Page.IsPostBack)
             {
@@ -59,7 +52,7 @@ namespace QLCVan
                               g.TrangThai
                           };
 
-                
+
                 ddlLoaiCV.DataSource = db.tblLoaiCVs;
                 ddlLoaiCV.DataTextField = "TenLoaiCV";
                 ddlLoaiCV.DataValueField = "MaLoaiCV";
@@ -68,21 +61,23 @@ namespace QLCVan
                 txtngaybanhanh.Attributes["placeholder"] = "dd/mm/yyyy";
                 txtngaygui.Attributes["placeholder"] = "dd/mm/yyyy";
 
-                if (Request.QueryString["macv"] != null)
+                if (Request.QueryString["id"] != null)
                 {
-                    tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV.ToString() == Request.QueryString["macv"].ToString());
+                    tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV.ToString() == Request.QueryString["id"].ToString());
                     if (cv1 != null)
                     {
                         txttieude.Text = cv1.TieuDeCV;
-                        txtngaybanhanh.Text = cv1.NgayGui.ToString();
-                        txtngaygui.Text = cv1.NgayBanHanh.ToString();
+                        txtngaybanhanh.Text = cv1.NgayBanHanh.HasValue ? cv1.NgayBanHanh.Value.ToString("dd-MM-yyyy") : "";
+                        txtngaygui.Text = cv1.NgayGui.HasValue ? cv1.NgayGui.Value.ToString("dd-MM-yyyy") : "";
                         txtcqbh.Text = cv1.CoQuanBanHanh;
                         txtsocv.Text = cv1.SoCV;
                         txttrichyeu.Text = cv1.TrichYeuND;
                         ListBox1.DataTextField = "TenFile";
-                        ListBox1.DataSource = cv1.tblFileDinhKems;
+                        ListBox1.DataSource = db.tblFileDinhKems.Where(t => t.MaCV == cv1.MaCV);
                         ListBox1.DataBind();
-                        RadioButtonList1.SelectedIndex = (int)cv1.GuiHayNhan;
+                        txtNguoiDuyet.Text = cv1.NguoiDuyet;
+
+                        //RadioButtonList1.SelectedIndex = (int)cv1.GuiHayNhan;
                         txtNguoiKy.Text = cv1.NguoiKy;
                         txtGhiChu.Text = cv1.GhiChu;
                     }
@@ -256,7 +251,7 @@ namespace QLCVan
                           g.NguoiKy,
                           TrichYeuND = g.TrichYeuND.Substring(0, 200) + ". . ."
                       };
-           
+
         }
 
         protected void gvnhapcnden_SelectedIndexChanged(object sender, EventArgs e)

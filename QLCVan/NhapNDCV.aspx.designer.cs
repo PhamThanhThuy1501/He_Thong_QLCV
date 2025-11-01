@@ -132,13 +132,13 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Label lblDonViNhan;
 
         /// <summary>
-        /// ddlDonViNhan control.
+        /// lstDonViNhan control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDonViNhan;
+        protected global::System.Web.UI.WebControls.ListBox lstDonViNhan;
 
         /// <summary>
         /// lblNguoiKy control.
@@ -177,6 +177,15 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.RadioButtonList RadioButtonList1;
 
         /// <summary>
+        /// pnlNguoiDuyet control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlNguoiDuyet;
+
+        /// <summary>
         /// lblNguoiDuyet control.
         /// </summary>
         /// <remarks>
@@ -186,13 +195,13 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Label lblNguoiDuyet;
 
         /// <summary>
-        /// txtNguoiDuyet control.
+        /// ddlNguoiDuyet control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNguoiDuyet;
+        protected global::System.Web.UI.WebControls.DropDownList ddlNguoiDuyet;
 
         /// <summary>
         /// lblTrichYeu control.

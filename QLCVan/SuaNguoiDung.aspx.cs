@@ -1,117 +1,296 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace QLCVan
 {
     public partial class SuaNguoiDung : System.Web.UI.Page
     {
-        private List<QLNguoiDung.NguoiDung> GetDanhSachNguoiDung()
-        {
-            return Session["DanhSachNguoiDung"] as List<QLNguoiDung.NguoiDung>;
-        }
+        private static string CS => ConfigurationManager.ConnectionStrings["QuanLyCongVanConnectionString1"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                // 1) Lấy param
-                var tenDN = Request.QueryString["TenDangNhap"]; // đúng với link bạn đang dùng
-                if (string.IsNullOrWhiteSpace(tenDN))
-                {
-                    Response.Redirect("QLNguoiDung.aspx");
-                    return;
-                }
-
-                // 2) Lấy DS từ Session (có thể null)
-                var ds = GetDanhSachNguoiDung();
-                if (ds == null || ds.Count == 0)
-                {
-                    // Không có dữ liệu trong Session -> quay lại list (hoặc bạn có thể nạp lại từ DB tại đây)
-                    Response.Redirect("QLNguoiDung.aspx");
-                    return;
-                }
-
-                // 3) Tìm user
-                var user = ds.FirstOrDefault(u => string.Equals(u.TenDangNhap, tenDN, StringComparison.OrdinalIgnoreCase));
-                if (user == null)
-                {
-                    Response.Redirect("QLNguoiDung.aspx");
-                    return;
-                }
-
-                // 4) Đổ dữ liệu
-                txtTenDN.Text = user.TenDangNhap ?? "";
-                txtEmail.Text = user.Email ?? "";
-                txtMaNguoiDung.Text = user.MaNguoiDung ?? "";
-                txtHoTen.Text = user.HoTen ?? "";
-
-                // Chọn DonVi/ChucVu an toàn: nếu không có trong danh sách -> thêm tạm rồi chọn
-                SelectOrInsert(ddlDonVi, user.DonVi);
-                SelectOrInsert(ddlChucVu, user.ChucVu);
-
-                rbKichHoat.Checked = user.DangKichHoat;
-                rbChuaKichHoat.Checked = !user.DangKichHoat;
+                BindDropdowns();
+                LoadUser();
             }
         }
 
-        // Helper: chọn giá trị nếu có; nếu chưa có thì thêm ListItem(value,value) rồi chọn
-        private static void SelectOrInsert(DropDownList ddl, string value)
+        private void BindDropdowns()
         {
-            var val = value ?? "";
-            var item = ddl.Items.FindByValue(val);
-            if (item == null)
+            // Đơn vị
+            using (var con = new SqlConnection(CS))
+            using (var da = new SqlDataAdapter("SELECT MaDonVi, TenDonVi FROM dbo.tblDonVi ORDER BY TenDonVi", con))
             {
-                // Nếu bạn không muốn tự thêm, có thể bỏ nhánh này và chỉ cần: if(item!=null) ddl.SelectedValue=...
-                ddl.Items.Add(new ListItem(val, val));
+                var tb = new DataTable(); da.Fill(tb);
+                ddlDonVi.DataSource = tb;
+                ddlDonVi.DataTextField = "TenDonVi";
+                ddlDonVi.DataValueField = "MaDonVi";
+                ddlDonVi.DataBind();
             }
-            ddl.SelectedValue = val;
+            ddlDonVi.Items.Insert(0, new ListItem("Đơn vị", ""));
+
+            // Chức vụ
+            using (var con = new SqlConnection(CS))
+            using (var da = new SqlDataAdapter("SELECT MaChucVu, TenChucVu FROM dbo.tblChucVu ORDER BY TenChucVu", con))
+            {
+                var tb = new DataTable(); da.Fill(tb);
+                ddlChucVu.DataSource = tb;
+                ddlChucVu.DataTextField = "TenChucVu";
+                ddlChucVu.DataValueField = "MaChucVu";
+                ddlChucVu.DataBind();
+            }
+            ddlChucVu.Items.Insert(0, new ListItem("Chức vụ", ""));
         }
 
-        protected void btnSua_Click(object sender, EventArgs e)
+        private void LoadUser()
         {
-            var ds = GetDanhSachNguoiDung();
-            if (ds == null)
+            string id = Request.QueryString["id"];
+            if (string.IsNullOrWhiteSpace(id))
             {
-                // Không có session -> quay về danh sách
-                Response.Redirect("QLNguoiDung.aspx");
+                Toast("warning", "Thiếu mã người dùng cần sửa.");
                 return;
             }
 
-            var tenDN = (txtTenDN.Text ?? "").Trim();
-            var user = ds.FirstOrDefault(u => string.Equals(u.TenDangNhap, tenDN, StringComparison.OrdinalIgnoreCase));
-            if (user == null)
+            using (var con = new SqlConnection(CS))
+            using (var cmd = new SqlCommand("SELECT TOP 1 * FROM dbo.tblNguoiDung WHERE MaNguoiDung=@Id", con))
             {
-                Response.Redirect("QLNguoiDung.aspx");
-                return;
-            }
-
-            // Validate mật khẩu (nếu bạn muốn bắt buộc khớp khi có nhập)
-            if (!string.IsNullOrEmpty(txtMatKhau.Text) || !string.IsNullOrEmpty(txtXacNhanMK.Text))
-            {
-                if (!string.Equals(txtMatKhau.Text, txtXacNhanMK.Text, StringComparison.Ordinal))
+                cmd.Parameters.AddWithValue("@Id", id);
+                using (var da = new SqlDataAdapter(cmd))
                 {
-                    // Hiển thị thông báo nhẹ nhàng
-                    ClientScript.RegisterStartupScript(GetType(), "pw", "alert('Mật khẩu xác nhận không khớp');", true);
-                    return;
+                    var tb = new DataTable(); da.Fill(tb);
+                    if (tb.Rows.Count == 0)
+                    {
+                        Toast("warning", "Không tìm thấy người dùng.");
+                        return;
+                    }
+
+                    var r = tb.Rows[0];
+                    txtMaNguoiDung.Text = r["MaNguoiDung"].ToString();
+                    txtTenDN.Text       = r["TenDN"].ToString();
+                    txtMatKhau.Attributes["value"] = r["MatKhau"].ToString(); // chỉ để hiển thị
+                    txtHoTen.Text       = r["HoTen"].ToString();
+                    txtEmail.Text       = r["Email"].ToString();
+
+                    bool trangThai = r["TrangThai"] != DBNull.Value && Convert.ToBoolean(r["TrangThai"]);
+                    rdoKichHoat.Checked = trangThai;
+                    rdoKhongKichHoat.Checked = !trangThai;
+
+                    if (r["MaDonVi"]  != DBNull.Value) ddlDonVi.SelectedValue  = r["MaDonVi"].ToString();
+                    if (r["MaChucVu"] != DBNull.Value) ddlChucVu.SelectedValue = r["MaChucVu"].ToString();
                 }
-                // TODO: Hash mật khẩu trước khi lưu (khuyến nghị). Ở đây demo Session nên bỏ qua.
-                // user.MatKhau = txtMatKhau.Text;
+            }
+        }
+
+        // ===== Helpers lấy hiện trạng =====
+        private string GetCurrentPassword(string maNguoiDung)
+        {
+            using (var con = new SqlConnection(CS))
+            using (var cmd = new SqlCommand("SELECT MatKhau FROM dbo.tblNguoiDung WHERE MaNguoiDung=@Id", con))
+            {
+                cmd.Parameters.AddWithValue("@Id", maNguoiDung);
+                con.Open();
+                var obj = cmd.ExecuteScalar();
+                return obj == null ? "" : obj.ToString();
+            }
+        }
+
+        private string GetCurrentMaNhom(string maNguoiDung)
+        {
+            using (var con = new SqlConnection(CS))
+            using (var cmd = new SqlCommand("SELECT MaNhom FROM dbo.tblNguoiDung WHERE MaNguoiDung=@Id", con))
+            {
+                cmd.Parameters.AddWithValue("@Id", maNguoiDung);
+                con.Open();
+                var obj = cmd.ExecuteScalar();
+                return obj == null ? null : obj.ToString();
+            }
+        }
+
+        // ===== Validate/Unique helpers =====
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return false;
+            // Regex email cơ bản, đủ dùng cho form
+            var re = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return re.IsMatch(email);
+        }
+
+        private bool TenDNExistsForOther(string id, string tenDN)
+        {
+            using (var con = new SqlConnection(CS))
+            using (var cmd = new SqlCommand(@"SELECT COUNT(1) FROM dbo.tblNguoiDung WHERE TenDN=@TenDN AND MaNguoiDung<>@Id", con))
+            {
+                cmd.Parameters.AddWithValue("@TenDN", tenDN ?? "");
+                cmd.Parameters.AddWithValue("@Id", id ?? "");
+                con.Open();
+                return (int)cmd.ExecuteScalar() > 0;
+            }
+        }
+
+        private bool EmailExistsForOther(string id, string email)
+        {
+            using (var con = new SqlConnection(CS))
+            using (var cmd = new SqlCommand(@"SELECT COUNT(1) FROM dbo.tblNguoiDung WHERE Email=@Email AND MaNguoiDung<>@Id", con))
+            {
+                cmd.Parameters.AddWithValue("@Email", email ?? "");
+                cmd.Parameters.AddWithValue("@Id", id ?? "");
+                con.Open();
+                return (int)cmd.ExecuteScalar() > 0;
+            }
+        }
+
+        protected void btnLuu_Click(object sender, EventArgs e)
+        {
+            var id        = (txtMaNguoiDung.Text ?? "").Trim();
+            var tenDN     = (txtTenDN.Text ?? "").Trim();
+            var hoTen     = (txtHoTen.Text ?? "").Trim();
+            var email     = (txtEmail.Text ?? "").Trim();
+            var maDonVi   = ddlDonVi.SelectedValue;
+            var maChucVu  = ddlChucVu.SelectedValue;
+            var trangThai = rdoKichHoat.Checked;
+
+            // ===== VALIDATE ĐẦU VÀO =====
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Toast("warning", "Thiếu mã người dùng.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(hoTen))
+            {
+                Toast("warning", "Vui lòng nhập Họ và tên.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(tenDN))
+            {
+                Toast("warning", "Vui lòng nhập Tên đăng nhập.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Toast("warning", "Vui lòng nhập Email.");
+                return;
+            }
+            if (!IsValidEmail(email))
+            {
+                Toast("warning", "Email không đúng định dạng.");
+                return;
+            }
+            // Nếu bạn muốn bắt buộc chọn Đơn vị/Chức vụ, để nguyên 2 check sau; nếu không, xoá chúng đi.
+            if (string.IsNullOrEmpty(maDonVi))
+            {
+                Toast("warning", "Vui lòng chọn Đơn vị.");
+                return;
+            }
+            if (string.IsNullOrEmpty(maChucVu))
+            {
+                Toast("warning", "Vui lòng chọn Chức vụ.");
+                return;
             }
 
-            // Cập nhật các trường có trên form
-            user.Email = (txtEmail.Text ?? "").Trim();
-            user.HoTen = (txtHoTen.Text ?? "").Trim();
-            user.DonVi = ddlDonVi.SelectedValue;
-            user.ChucVu = ddlChucVu.SelectedValue;
-            user.DangKichHoat = rbKichHoat.Checked;
+            // Nếu người dùng nhập mật khẩu mới, enforce rule tối thiểu
+            var isChangePassword = !string.IsNullOrWhiteSpace(txtMatKhau.Text);
+            if (isChangePassword && txtMatKhau.Text.Length < 6)
+            {
+                Toast("warning", "Mật khẩu mới phải có ít nhất 6 ký tự.");
+                return;
+            }
 
-            // Lưu lại vào Session (thực ra user là reference trong list nên không cần, nhưng giữ cho rõ ràng)
-            Session["DanhSachNguoiDung"] = ds;
+            // Unique cho user khác (exclude chính mình)
+            if (TenDNExistsForOther(id, tenDN))
+            {
+                Toast("warning", "Tên đăng nhập đã được dùng bởi người khác.");
+                return;
+            }
+            if (EmailExistsForOther(id, email))
+            {
+                Toast("warning", "Email đã được dùng bởi người khác.");
+                return;
+            }
 
-            // Quay lại danh sách
-            Response.Redirect("QLNguoiDung.aspx?updated=1", endResponse: false);
+            // Lấy mật khẩu hiện tại nếu không đổi
+            var matKhau = isChangePassword ? txtMatKhau.Text : GetCurrentPassword(id);
+
+            // Giữ nguyên nhóm hiện có
+            var maNhom = GetCurrentMaNhom(id);
+
+            // ===== UPDATE =====
+            try
+            {
+                using (var con = new SqlConnection(CS))
+                using (var cmd = new SqlCommand(@"
+UPDATE dbo.tblNguoiDung SET
+    Email     = @Email,
+    TenDN     = @TenDN,
+    MatKhau   = @MatKhau,
+    TrangThai = @TrangThai,
+    HoTen     = @HoTen,
+    MaDonVi   = @MaDonVi,
+    MaChucVu  = @MaChucVu,
+    QuyenHan  = @QuyenHan,   -- nếu DB không dùng, bỏ dòng này + tham số
+    MaNhom    = @MaNhom      -- hoặc bỏ nếu không muốn đổi nhóm
+WHERE MaNguoiDung = @Id;", con))
+                {
+                    cmd.Parameters.Add("@Id", SqlDbType.NVarChar, 50).Value       = id;
+                    cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 200).Value   = email;
+                    cmd.Parameters.Add("@TenDN", SqlDbType.NVarChar, 100).Value   = tenDN;
+                    cmd.Parameters.Add("@MatKhau", SqlDbType.NVarChar, 200).Value = matKhau; // TODO: hash nếu cần
+                    cmd.Parameters.Add("@TrangThai", SqlDbType.Bit).Value         = trangThai;
+                    cmd.Parameters.Add("@HoTen", SqlDbType.NVarChar, 200).Value   = hoTen;
+                    cmd.Parameters.Add("@MaDonVi", SqlDbType.NVarChar, 20).Value  = string.IsNullOrWhiteSpace(maDonVi) ? (object)DBNull.Value : maDonVi;
+                    cmd.Parameters.Add("@MaChucVu", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(maChucVu) ? (object)DBNull.Value : maChucVu;
+
+                    // Quyền hạn mặc định (hoặc bỏ khỏi SQL nếu không dùng)
+                    cmd.Parameters.Add("@QuyenHan", SqlDbType.NVarChar, 50).Value  = "User";
+
+                    // Giữ nguyên MaNhom hiện có (nếu null thì cho DBNull)
+                    cmd.Parameters.Add("@MaNhom", SqlDbType.NVarChar, 20).Value    = string.IsNullOrEmpty(maNhom) ? (object)DBNull.Value : maNhom;
+
+                    con.Open();
+                    var affected = cmd.ExecuteNonQuery();
+                    if (affected <= 0)
+                    {
+                        Toast("warning", "Không có bản ghi nào được cập nhật.");
+                        return;
+                    }
+                }
+
+                // Đồng bộ quyền nếu bạn cần (không bắt buộc)
+                try { PermissionHelper.ReSyncPermission(); } catch { /* ignore */ }
+
+                // Flash + Redirect để hiển thị toast thành công ở trang danh sách
+                Session["flash.type"] = "success";
+                Session["flash.msg"]  = "Cập nhật người dùng thành công.";
+                Response.Redirect("QLnguoidung.aspx");
+            }
+            catch (Exception ex)
+            {
+                // Hiện toast lỗi ngay tại trang sửa (không redirect)
+                Toast("danger", "Lỗi khi cập nhật: " + ex.Message);
+            }
+        }
+
+        protected void btnQuayLai_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("QLNguoiDung.aspx");
+        }
+
+        // ===== Toast helper =====
+        private void Toast(string type, string message)
+        {
+            var json = new JavaScriptSerializer().Serialize(message);
+            ScriptManager.RegisterStartupScript(
+                this, GetType(),
+                Guid.NewGuid().ToString("N"),
+                $"showToast('{type}', {json});",
+                true
+            );
         }
     }
 }

@@ -3,15 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Globalization;
 
 namespace QLCVan
 {
     public partial class QLCV : System.Web.UI.MasterPage
     {
+        // Whitelist cho ROLE=User (chỉ 2 trang được phép)
+        private static readonly HashSet<string> UserAllowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "~/Gioithieu.aspx",
+            "~/Trangchu.aspx",
+            // "~/GioiThieu.aspx",
+        };
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            InfoDataContext db = new InfoDataContext();
+            // 1) Hiển thị chào mừng / nút login
             lblWelcome.Visible = false;
             if (Session["TenDN"] != null)
             {
@@ -20,19 +28,122 @@ namespace QLCVan
                 lblWelcome.Text = "Xin chào: " + Session["TenDN"].ToString();
             }
 
-            // Loại bỏ mục "Danh bạ email" và "Tìm kiếm công văn" khỏi menu
-            rptMenu.DataSource = db.tblMenus.Where(c => c.MenuID.ToString() == "1" || c.MenuID.ToString() == "7" ||
-                                                        c.MenuID.ToString() == "6" || c.MenuID.ToString() == "4" ||
-                                                        c.MenuID.ToString() == "5" || c.MenuID.ToString() == "2" ||
-                                                        c.MenuID.ToString() == "3")
-                                             .Where(c => c.MenuName != "Danh bạ email" && c.MenuName != "Tìm kiếm công văn");  // Loại bỏ cả "Danh bạ email" và "Tìm kiếm công văn"
-            rptMenu.DataBind();
+            // 2) Xác định vai trò
+            string role = GetCurrentRole(); // "Admin" | "User" | ""
 
-            /*rptMenu2.DataSource = db.tblMenus.Where(c => c.MenuID.ToString() == "2" || c.MenuID.ToString() == "7" ||
-                                                         c.MenuID.ToString() == "3" || c.MenuID.ToString() == "4");
-            rptMenu2.DataBind();*/
+            // 3) Bỏ kiểm tra cho trang public
+            var path = Request.AppRelativeCurrentExecutionFilePath; // "~/Trang.aspx"
+            if (!IsPublicPath(path))
+            {
+                // Chưa đăng nhập -> về trang đăng nhập
+                if (string.IsNullOrEmpty(role))
+                {
+                    Response.Redirect("~/Dangnhap.aspx");
+                    return;
+                }
+
+                // ROLE=User -> chỉ cho vào 2 trang whitelisted
+                if (role.Equals("User", StringComparison.OrdinalIgnoreCase) && !UserAllowed.Contains(path))
+                {
+                    if (System.IO.File.Exists(Server.MapPath("~/Errors/403.aspx")))
+                        Response.Redirect("~/Errors/403.aspx");
+                    else
+                        Response.Redirect("~/Dangnhap.aspx");
+                    return;
+                }
+            }
+
+            // 4) Đổ menu theo vai trò (CHỈ ở đây — không truy vấn db trực tiếp trong Page_Load)
+            if (!IsPostBack)
+            {
+                BindMenuByRole(role);
+            }
         }
 
+        private void BindMenuByRole(string role)
+        {
+            using (var db = new InfoDataContext())
+            {
+                // Tập menu cơ bản (bỏ "Danh bạ email" & "Tìm kiếm công văn")
+                var baseQuery = db.tblMenus
+                    .Where(c =>
+                           c.MenuID == 1 || c.MenuID == 7 ||
+                           c.MenuID == 6 || c.MenuID == 4 ||
+                           c.MenuID == 5 || c.MenuID == 2 ||
+                           c.MenuID == 3 || c.MenuID == 10)
+                    .Where(c => c.MenuName != "Danh bạ email"
+                             && c.MenuName != "Tìm kiếm công văn");
+
+                var list = baseQuery.ToList();
+
+                if (role.Equals("User", StringComparison.OrdinalIgnoreCase))
+                {
+                    var allowedNames = new[] { "GIỚI THIỆU", "XEM CÔNG VĂN" };
+                    list = list
+                        .Where(m =>
+                            allowedNames.Any(n =>
+                                string.Equals(
+                                    n,
+                                    (m.MenuName ?? string.Empty).Trim(),
+                                    StringComparison.OrdinalIgnoreCase)))
+                        .ToList();
+                }
+
+                rptMenu.DataSource = list;
+                rptMenu.DataBind();
+            }
+        }
+
+        private bool IsPublicPath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return true;
+
+            return path.Equals("~/Dangnhap.aspx", StringComparison.OrdinalIgnoreCase)
+                || path.Equals("~/Errors/403.aspx", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".css", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".gif", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".ico", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".woff", StringComparison.OrdinalIgnoreCase)
+                || path.EndsWith(".woff2", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Lấy vai trò hiện tại:
+        /// 1) Ưu tiên Session["ROLE"] nếu đã set ở trang đăng nhập
+        /// 2) Nếu chưa có, tra DB theo Session["TenDN"] để lấy cột QuyenHan và lưu vào Session
+        /// </summary>
+        private string GetCurrentRole()
+        {
+            var roleInSession = (Session["ROLE"] ?? "").ToString();
+            if (!string.IsNullOrEmpty(roleInSession)) return roleInSession;
+
+            var tenDn = (Session["TenDN"] ?? "").ToString();
+            if (string.IsNullOrEmpty(tenDn)) return "";
+
+            try
+            {
+                using (var db = new InfoDataContext())
+                {
+                    var u = db.tblNguoiDungs.FirstOrDefault(x => x.TenDN == tenDn);
+                    if (u != null && !string.IsNullOrEmpty(u.QuyenHan))
+                    {
+                        Session["ROLE"] = u.QuyenHan; // "Admin" | "User"
+                        return u.QuyenHan;
+                    }
+                }
+            }
+            catch
+            {
+                // tránh văng lỗi tại master
+            }
+
+            return "";
+        }
 
         protected void lbtLogOut_Click(object sender, EventArgs e)
         {
@@ -45,8 +156,12 @@ namespace QLCVan
 
         protected void lbtLogIn_Click(object sender, EventArgs e)
         {
-
             Response.Redirect("Dangnhap.aspx");
+        }
+
+        protected void rptMenu_ItemCommand(object source, System.Web.UI.WebControls.RepeaterCommandEventArgs e)
+        {
+
         }
     }
 }

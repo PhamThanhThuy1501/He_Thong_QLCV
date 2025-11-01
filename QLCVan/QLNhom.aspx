@@ -197,8 +197,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
           </div>
           <div class="modal-body">
-            <div class="mb-3"><asp:TextBox ID="txtTenDonVi" runat="server" CssClass="form-control" placeholder="Nhập mã đơn vị..." /></div>
-            <div class="mb-3"><asp:TextBox ID="txtMoTaDonVi" runat="server" CssClass="form-control" placeholder="Nhập tên đơn vị..." /></div>
+            <div class="mb-3"><asp:TextBox ID="txtMaDonVi" runat="server" CssClass="form-control" placeholder="Nhập mã đơn vị..." /></div>
+            <div class="mb-3"><asp:TextBox ID="txtTenDonVi" runat="server" CssClass="form-control" placeholder="Nhập tên đơn vị..." /></div>
           </div>
           <div class="modal-footer">
             <asp:Button ID="btnSave" runat="server" CssClass="btn btn-success" Text="Thêm" OnClick="btnSave_Click" />
@@ -236,26 +236,26 @@
       </div>
     </div>
 
-    <!-- Modal Xác nhận xoá -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="confirmDeleteLabel">Xác nhận xóa đơn vị</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-          </div>
-          <div class="modal-body">
-            Bạn có chắc muốn xóa đơn vị này không?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            <asp:Button ID="btnConfirmDelete" runat="server" Text="Xóa" CssClass="btn btn-danger"
-                        OnClick="btnConfirmDelete_Click" UseSubmitBehavior="false" />
-          </div>
-        </div>
-      </>
+   <!-- Modal Xác nhận xoá -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteLabel">Xác nhận xóa đơn vị</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        Bạn có chắc muốn xóa đơn vị này không?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        <asp:Button ID="btnConfirmDelete" runat="server" Text="Xóa" CssClass="btn btn-danger"
+                    OnClick="btnConfirmDelete_Click" UseSubmitBehavior="false" />
+      </div>
     </div>
+  </div>
+</div>
+
 
     <!-- Bootstrap + script mở modal -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -280,4 +280,29 @@
         }
     </script>
   </div>
+        <!-- Toast container (fixed ở góc trên bên phải) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index:1080">
+  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div id="toastBody" class="toast-body">Đã xoá thành công</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Hàm hiển thị toast với message + màu
+    function showToast(message, bsBgClass) {
+        var toastEl = document.getElementById('liveToast');
+        var bodyEl = document.getElementById('toastBody');
+
+        // đổi nội dung + màu nền (success / danger / info ...)
+        bodyEl.textContent = message || 'Thành công';
+        toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-info', 'text-bg-warning');
+        toastEl.classList.add(bsBgClass || 'text-bg-success');
+
+        var toast = new bootstrap.Toast(toastEl, { delay: 2000 });
+        toast.show();
+    }
+</script>
 </asp:Content>

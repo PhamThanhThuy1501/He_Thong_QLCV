@@ -43,7 +43,7 @@
                 </div>
                 <div id="menu" style="">
     <ul>
-        <asp:Repeater ID="rptMenu" runat="server">
+        <asp:Repeater ID="rptMenu" runat="server" OnItemCommand="rptMenu_ItemCommand">
             <ItemTemplate>
                 <asp:HiddenField ID="hdCateID" Value='<%# Eval("MenuID") %>' runat="server"></asp:HiddenField>
                 <!-- Loại bỏ mục tìm kiếm công văn bằng cách kiểm tra MenuName -->
@@ -118,8 +118,9 @@
                
             </div>
         </div>
-            <a href="QLCV.Master">QLCV.Master</a>
+         
     </center>
+
     </form>
 </body>
 </html>

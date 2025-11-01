@@ -5,22 +5,33 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+         .toaster-wrap { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
         /* Giữ nguyên toàn bộ style gốc */
         body { background: #fff; font-family: "Segoe UI", Arial, sans-serif; }
         .page { width: 100%; margin: 0; padding: 0; }
         .main-title { font-size: 20px; font-weight: bold; text-transform: uppercase; color: #1f2937; margin-bottom: 5px; }
         .content-header { background: transparent; padding: 0; border-bottom: none; margin: 0 auto 6px auto; }
         .content-header-title { text-transform: uppercase; font-weight: 700; font-size: 20px; color: #444; margin: 0 0 6px 0; }
-        .welcome-bar { background: #c00; color: #fff; border-radius: 4px; padding: 8px 0; margin: 0 auto 26px auto;
-                       font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;
-                       height: 13px; overflow: hidden; }
+        .welcome-bar {   background: #c00;                  /* nền đỏ đậm */
+  color: #fff;
+  border-radius: 4px;                /* bo góc mềm */
+  padding: 8px 0;                    /* cao vừa để chữ nằm giữa */
+  margin: 0 auto 26px auto;
+  font-weight: bold;                 /* in đậm */
+  text-align: center;
+  display: flex;
+  align-items: center;               /* căn giữa theo chiều cao */
+  justify-content: center;
+  height: 30px;                      /* chiều cao cố định để đều */
+  overflow: hidden; }
         .welcome-bar marquee { font-size: 16px; font-weight: bold; color: #fff; }
-        .page-title { font-size: 20px; font-weight: bold; text-align: start; color: #111; margin: 25px 0 20px 0; }
+        .page-title { font-size: 20px; font-weight: bold; text-align: center; color: #111; margin: 25px 0 20px 0; }
         .search-bar { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 0 auto 25px auto; }
         .search-bar label { font-weight: 600; color: #111; margin-right: 10px; }
         .search-bar input { border: 1px solid #ccc; border-radius: 4px; padding: 8px 10px; height: 34px; width: 280px; font-size: 14px; }
-        .btn-search { background: #c00; color: #fff; border: none; height: 36px; width: 36px; cursor: pointer; border-radius: 4px;
+        .btn-search { background: #c00; color: #fff; border: none!important; height: 36px; width: 36px; cursor: pointer; border-radius: 4px;
                       display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .btn-search:hover { background: #a00; }
         .table-wrapper { width: 70%; margin: 0 auto; background: #fff; }
@@ -32,13 +43,21 @@
                                           color: #111; text-decoration: none; transition: all 0.2s ease; }
         .grid-pager a:hover { color: #c00; }
         .grid-pager span { background: #c00; color: #fff; }
+        /* Nếu dùng <asp:LinkButton> thì thêm rule này để chắc chắn không bị gạch chân */
+.btn-search:link,
+.btn-search:visited,
+.btn-search:active,
+.btn-search:hover {
+  text-decoration: none !important;
+  color: #fff !important;     /* luôn trắng */
+}
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="page">
         <div class="content-header">
-            <h2 class="content-header-title">QUẢN LÝ NGƯỜI DÙNG</h2>
+            <h2 class="content-header-title">QUẢN LÝ CHỨC VỤ</h2>
         </div>
 
         <div class="welcome-bar">
@@ -54,7 +73,7 @@
 
         <!-- Thanh tìm kiếm -->
         <div class="search-bar">
-            <label>Tìm kiếm:</label>
+            <label>Tìm kiếm</label>
             <asp:TextBox ID="txtTenQuyen" runat="server" placeholder="Nhập tên nhóm quyền" />
             <asp:TextBox ID="txtMaQuyen" runat="server" placeholder="Nhập mã nhóm quyền" />
             <asp:LinkButton ID="btnSearch" runat="server" CssClass="btn-search" OnClick="btnSearch_Click">
@@ -92,4 +111,33 @@
             </asp:GridView>
         </div>
     </div>
+    <div id="toaster" class="toaster-wrap"></div>
+
+<script>
+    // type: 'success' | 'error' | 'info' | 'warning'
+    window.showToast = function (message, type) {
+        var bg =
+            type === 'error' ? 'bg-danger' :
+                type === 'warning' ? 'bg-warning text-dark' :
+                    type === 'info' ? 'bg-info text-dark' :
+                        'bg-success';
+
+        var id = 't' + Date.now();
+        var html =
+            '<div id="' + id + '" class="toast align-items-center text-white ' + bg + ' border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">' +
+            '<div class="d-flex">' +
+            '<div class="toast-body">' + message + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
+            '</div>' +
+            '</div>';
+
+        var wrap = document.getElementById('toaster');
+        wrap.insertAdjacentHTML('beforeend', html);
+
+        var el = document.getElementById(id);
+        var t = new bootstrap.Toast(el, { delay: 2200 });
+        t.show();
+        el.addEventListener('hidden.bs.toast', function () { el.remove(); });
+    };
+</script>
 </asp:Content>

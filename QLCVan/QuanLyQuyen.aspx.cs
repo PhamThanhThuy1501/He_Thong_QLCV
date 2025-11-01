@@ -9,7 +9,7 @@ namespace QLCVan
     public partial class QuanLyQuyen : System.Web.UI.Page
     {
         InfoDataContext db = new InfoDataContext();
-
+        string maQuyenYeuCau = "Q008";
 
         private List<tblQuyen> GetDanhSachQuyen()
         {
@@ -19,6 +19,17 @@ namespace QLCVan
         }
         protected void Page_Load(object sender, EventArgs e)
         {
+            if ((Session["TenDN"] == null))
+            {
+                Response.Redirect("Dangnhap.aspx");
+            }
+            if (!PermissionHelper.HasPermission(maQuyenYeuCau))
+            {
+                Response.Write("<script>alert('Bạn không có quyền truy cập trang này!'); window.history.back();</script>");
+                Response.End();
+            }
+
+
             if (!IsPostBack)
                 LoadQuyen();
         }
@@ -49,7 +60,7 @@ namespace QLCVan
 
             IQueryable<tblQuyen> query = db.tblQuyens;
 
-            
+
             if (!string.IsNullOrEmpty(keywordTen))
             {
                 query = query.Where(q => q.TenQuyen.ToLower().Contains(keywordTen.ToLower()));

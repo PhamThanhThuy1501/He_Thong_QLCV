@@ -7,57 +7,55 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <style type="text/css">
         /* Reset cơ bản và font */
-      :root {
-  --ink: #0f172a;
-  --red: #c00000;
-  --blue: #0d6efd;
-  --line: #e5e7eb;
-}
+        :root {
+            --ink: #0f172a;
+            --red: #c00000;
+            --blue: #0d6efd;
+            --line: #e5e7eb;
+        }
 
 
+        /* ===== Phần tiêu đề + thanh chạy chữ ===== */
+        .content-header {
+            background: transparent;
+            padding: 0;
+            border-bottom: none;
+            margin: 0 auto 6px auto;
+        }
 
-/* ===== Phần tiêu đề + thanh chạy chữ ===== */
-.content-header {
-  background: transparent;
-  padding: 0;
-  border-bottom: none;
-  margin: 0 auto 6px auto;
-}
-
-.content-header-title {
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 20px;
-  color: #444;
-  margin: 0 0 6px 0;
-  letter-spacing: 0;
-}
+        .content-header-title {
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 20px;
+            color: #444;
+            margin: 0 0 6px 0;
+            letter-spacing: 0;
+        }
 
 
-/* ===== Thanh chạy chữ giống hình mẫu ===== */
-.welcome-bar {
-  background: #c00;                  /* nền đỏ đậm */
-  color: #fff;
-  border-radius: 4px;                /* bo góc mềm */
-  padding: 8px 0;                    /* cao vừa để chữ nằm giữa */
-  margin: 0 auto 26px auto;
-  font-weight: bold;                 /* in đậm */
-  text-align: center;
-  display: flex;
-  align-items: center;               /* căn giữa theo chiều cao */
-  justify-content: center;
-  height: 15px;                      /* chiều cao cố định để đều */
-  overflow: hidden;                  /* ẩn phần chữ thừa */
-}
+        /* ===== Thanh chạy chữ giống hình mẫu ===== */
+        .welcome-bar {
+            background: #c00; /* nền đỏ đậm */
+            color: #fff;
+            border-radius: 4px; /* bo góc mềm */
+            padding: 8px 0; /* cao vừa để chữ nằm giữa */
+            margin: 0 auto 26px auto;
+            font-weight: bold; /* in đậm */
+            text-align: center;
+            display: flex;
+            align-items: center; /* căn giữa theo chiều cao */
+            justify-content: center;
+            height: 15px; /* chiều cao cố định để đều */
+            overflow: hidden; /* ẩn phần chữ thừa */
+        }
 
-.welcome-bar marquee {
-  font-size: 16px;                   /* chữ lớn hơn chút */
-  font-weight: bold;
-  color: #fff;
-                
-}
+            .welcome-bar marquee {
+                font-size: 16px; /* chữ lớn hơn chút */
+                font-weight: bold;
+                color: #fff;
+            }
 
-      
+
 
         /* Container chính của form */
         .form-container {
@@ -275,7 +273,7 @@
             margin-top: 5px;
         }
 
-     
+
         /* Tệp đính kèm */
         .file-list-full-width {
             grid-column: 1 / -1;
@@ -299,7 +297,6 @@
             width: 100%;
             height: 100px;
         }
-    
     </style>
 
     <script src="Scripts/datepicker/jquery-1.10.2.js" type="text/javascript"></script>
@@ -323,15 +320,15 @@
         });
     </script>
 
-  <div class="content-header">
-  <h2 class="content-header-title">NHẬP NỘI DUNG CÔNG VĂN</h2>
-</div>
+    <div class="content-header">
+        <h2 class="content-header-title">NHẬP NỘI DUNG CÔNG VĂN</h2>
+    </div>
 
-<div class="welcome-bar">
-  <marquee behavior="scroll" direction="left" scrollamount="6">
-    Chào mừng bạn đến với hệ thống Quản lý Công văn điện tử.
-  </marquee>
-</div>
+    <div class="welcome-bar">
+        <marquee behavior="scroll" direction="left" scrollamount="6">
+            Chào mừng bạn đến với hệ thống Quản lý Công văn điện tử.
+        </marquee>
+    </div>
 
 
 
@@ -356,10 +353,12 @@
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="txtsocv" ErrorMessage="* Nhập số công văn" CssClass="note-red" />
                 </div>
             </div>
+
             <div class="form-field">
                 <asp:Label ID="lblLoaiCV" runat="server" Text="Loại công văn:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-                    <asp:DropDownList ID="ddlLoaiCV" runat="server" AutoPostBack="True" CssClass="form-select">
+                    <asp:DropDownList ID="ddlLoaiCV" runat="server" AutoPostBack="True"
+                        OnSelectedIndexChanged="ddlLoaiCV_SelectedIndexChanged" CssClass="form-select">
                         <asp:ListItem Text="-- Chọn loại công văn  --" Value="" />
                     </asp:DropDownList>
                     <asp:RequiredFieldValidator runat="server" ControlToValidate="ddlLoaiCV" InitialValue="" ErrorMessage="* Chọn công văn" CssClass="note-red" />
@@ -391,9 +390,19 @@
             <div class="form-field">
                 <asp:Label ID="lblDonViNhan" runat="server" Text="Đơn vị nhận:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-                    <asp:DropDownList ID="ddlDonViNhan" runat="server" CssClass="form-select">
+
+
+                    <%--<asp:DropDownList ID="ddlDonViNhan" runat="server" CssClass="form-select"
+                        AutoPostBack="True" OnSelectedIndexChanged="ddlDonViNhan_SelectedIndexChanged">
                         <asp:ListItem Text="-- Chọn đơn vị nhận --" Value="" />
-                    </asp:DropDownList>
+                    </asp:DropDownList>--%>
+
+                    <!-- MỚI: cho phép chọn nhiều đơn vị -->
+<asp:ListBox ID="lstDonViNhan" runat="server"
+    SelectionMode="Multiple"
+    CssClass="form-control"
+    Height="150px">
+</asp:ListBox>
                 </div>
             </div>
 
@@ -415,14 +424,14 @@
                 </div>
             </div>
 
-            <div class="form-field">
+            <asp:Panel ID="pnlNguoiDuyet" runat="server" CssClass="form-field" Visible="false">
                 <asp:Label ID="lblNguoiDuyet" runat="server" Text="Người duyệt:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-                    <asp:TextBox ID="txtNguoiDuyet" CssClass="form-input" runat="server" placeholder="Chọn người duyệt" />
+                    <asp:DropDownList ID="ddlNguoiDuyet" runat="server" CssClass="form-input">
+                        <asp:ListItem Text="-- Chọn người duyệt --" Value="0" />
+                    </asp:DropDownList>
                 </div>
-            </div>
-            <div class="form-field">
-            </div>
+            </asp:Panel>
 
             <div class="form-field-full-width">
                 <div class="form-field-inner">
@@ -474,7 +483,7 @@
         </div>
     </div>
 
-    <div class="grid-wrap">
+    <!-- <div class="grid-wrap">
         <div class="grid-title">TẤT CẢ CÁC CÔNG VĂN</div>
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" ChildrenAsTriggers="true">
             <ContentTemplate>
@@ -557,5 +566,5 @@
                 <asp:AsyncPostBackTrigger ControlID="gvnhapcnden" EventName="PageIndexChanging" />
             </Triggers>
         </asp:UpdatePanel>
-    </div>
+    </div> -->
 </asp:Content>
