@@ -390,11 +390,19 @@
             <div class="form-field">
                 <asp:Label ID="lblDonViNhan" runat="server" Text="Đơn vị nhận:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-                    <asp:DropDownList ID="ddlDonViNhan" runat="server" CssClass="form-select"
+
+
+                    <%--<asp:DropDownList ID="ddlDonViNhan" runat="server" CssClass="form-select"
                         AutoPostBack="True" OnSelectedIndexChanged="ddlDonViNhan_SelectedIndexChanged">
                         <asp:ListItem Text="-- Chọn đơn vị nhận --" Value="" />
-                    </asp:DropDownList>
+                    </asp:DropDownList>--%>
 
+                    <!-- MỚI: cho phép chọn nhiều đơn vị -->
+<asp:ListBox ID="lstDonViNhan" runat="server"
+    SelectionMode="Multiple"
+    CssClass="form-control"
+    Height="150px">
+</asp:ListBox>
                 </div>
             </div>
 

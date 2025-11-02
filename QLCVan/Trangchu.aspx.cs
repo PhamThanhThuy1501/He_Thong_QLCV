@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace QLCVan
 
         }
 
+
         // ✅ HÀM TẢI LOẠI CÔNG VĂN TỪ DB
         private void LoadLoaiCongVan()
         {
@@ -46,117 +48,75 @@ namespace QLCVan
             // ✅ thêm dòng "--Tất cả--" giống bản cũ
             ddlLoai.Items.Insert(0, new ListItem("-- Tất cả --", ""));
         }
+
         private void LoadData()
         {
-            // --- Lấy mã người dùng đăng nhập ---
             if (Session["MaNguoiDung"] == null)
                 return;
-            //if (PermissionHelper.HasPermission(maQuyenYeuCau))
-            //{
-            //    var q = from g in db.tblNoiDungCVs
-            //            join h in db.tblLoaiCVs on g.MaLoaiCV equals h.MaLoaiCV
-            //            select new { g, h };
 
-            //    var data = q
-            //         .OrderByDescending(x => x.g.NgayGui)
-            //         .Select(x => new
-            //         {
-            //             x.g.MaCV,
-            //             x.g.SoCV,
-            //             TenLoaiCV = x.h.TenLoaiCV,
-            //             x.g.NgayGui,
-            //             TieuDeCV = x.g.TieuDeCV.Length > 50 ? x.g.TieuDeCV.Substring(0, 50) + "..." : x.g.TieuDeCV,
-            //             x.g.CoQuanBanHanh,
-            //             x.g.GhiChu,
-            //             x.g.NgayBanHanh,
-            //             x.g.NguoiKy,
-            //             x.g.NoiNhan,
-            //             TrichYeuND = x.g.TrichYeuND.Length > 200 ? x.g.TrichYeuND.Substring(0, 200) + "..." : x.g.TrichYeuND,
-            //             x.g.TrangThai,         // bool
-            //             x.g.GuiHayNhan         // int (0: đi, 1: đến)
-            //         });
+            string maNguoiDung = Session["MaNguoiDung"].ToString().Trim();
 
-            //    GridView1.DataSource = data;
-            //    GridView1.DataBind();
-            //}
-            //else
-            //{
-            var maNguoiDung = (Session["MaNguoiDung"] as string)?.Trim();
-            if (string.IsNullOrWhiteSpace(maNguoiDung))
+            // 🔹 Lấy mã đơn vị của user
+            string maDonViNguoiDung = db.tblNguoiDungs
+                                        .Where(x => x.MaNguoiDung == maNguoiDung)
+                                        .Select(x => x.MaDonVi)
+                                        .FirstOrDefault();
+
+            if (string.IsNullOrEmpty(maDonViNguoiDung))
             {
-                Response.Redirect("Dangnhap.aspx");
-                return;
-            }
-            if (PermissionHelper.HasPermission(maQuyenXemToanBoCongVan))
-            {
-                var allCv = from cv in db.tblNoiDungCVs
-                            join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
-                            orderby cv.NgayGui descending
-                            select new
-                            {
-                                cv.MaCV,
-                                cv.SoCV,
-                                cv.NgayGui,
-                                TieuDeCV = cv.TieuDeCV.Length > 50 ? cv.TieuDeCV.Substring(0, 50) + "..." : cv.TieuDeCV,
-                                TrichYeuND = cv.TrichYeuND.Length > 200 ? cv.TrichYeuND.Substring(0, 200) + "..." : cv.TrichYeuND,
-                                loai.TenLoaiCV,
-                                cv.TrangThai,
-                                VaiTro = "Toàn hệ thống"
-                            };
-                GridView1.DataSource = allCv.ToList();
+                GridView1.DataSource = null;
                 GridView1.DataBind();
                 return;
             }
+
+            // 🔹 Công văn do user gửi
             var congVanGui = from cv in db.tblNoiDungCVs
                              join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
-                             where cv.MaNguoiGui == maNguoiDung.ToString()
+                             where cv.MaNguoiGui == maNguoiDung
                              select new
                              {
                                  cv.MaCV,
                                  cv.SoCV,
-                                 cv.NgayGui,
+                                 loai.TenLoaiCV,
                                  cv.TieuDeCV,
                                  cv.TrichYeuND,
-                                 loai.TenLoaiCV,
-                                 TrangThai = cv.TrangThai,
+                                 cv.TrangThai,
+                                 cv.NgayGui,
                                  VaiTro = "Người gửi"
                              };
 
-            var congVanNhan = from gn in db.tblGuiNhans
-                              join cv in db.tblNoiDungCVs on gn.MaCV equals cv.MaCV
+            // 🔹 Công văn gửi đến đơn vị của user
+            var congVanNhan = from cvdv in db.tblNoiDungCV_DonViNhans
+                              join cv in db.tblNoiDungCVs on cvdv.MaCV equals cv.MaCV
                               join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
-                              where gn.MaNguoiNhan == maNguoiDung.ToString()
+                              where cvdv.MaDonViNhan == maDonViNguoiDung
                               select new
                               {
                                   cv.MaCV,
                                   cv.SoCV,
-                                  cv.NgayGui,
+                                  loai.TenLoaiCV,
                                   cv.TieuDeCV,
                                   cv.TrichYeuND,
-                                  loai.TenLoaiCV,
-                                  TrangThai = gn.TrangThaiNhan,
-                                  VaiTro = "Người nhận"
+                                  cv.TrangThai,
+                                  cv.NgayGui,
+                                  VaiTro = "Đơn vị nhận"
                               };
 
+            // 🔹 Hợp nhất kết quả và sắp xếp mới nhất lên đầu
             var allData = congVanGui.Concat(congVanNhan)
-                                    .OrderByDescending(x => x.NgayGui)
-                                    .ToList();
+                .GroupBy(x => x.MaCV)
+                .Select(g => g.First()) // chỉ lấy 1 bản ghi duy nhất mỗi MaCV
+                .OrderByDescending(x => x.NgayGui)
+                .ToList();
 
-            GridView1.DataSource = allData.Select(x => new
-            {
-                x.MaCV,
-                x.SoCV,
-                x.NgayGui,
-                TieuDeCV = x.TieuDeCV.Length > 50 ? x.TieuDeCV.Substring(0, 50) + "..." : x.TieuDeCV,
-                TrichYeuND = x.TrichYeuND.Length > 200 ? x.TrichYeuND.Substring(0, 200) + "..." : x.TrichYeuND,
-                //x.TenLoaiCV,
-                x.TrangThai,
-                x.VaiTro
-            }).ToList();
+
+            // 🔹 Gán vào GridView
+            GridView1.DataSource = allData;
             GridView1.DataBind();
-            //}
-
         }
+
+
+
         protected void lnk_Xoa_Click(object sender, EventArgs e)
         {
             //string permisson = (Session["QuyenHan"] as string)?.Trim();
@@ -306,14 +266,20 @@ namespace QLCVan
                     return;
                 }
 
-                // Xóa file đính kèm trước
+                // 🔹 Xóa trước trong các bảng phụ có ràng buộc FK
                 var fileDinhKemList = db.tblFileDinhKems.Where(f => f.MaCV == maCv).ToList();
-                foreach (var file in fileDinhKemList)
-                {
-                    db.tblFileDinhKems.DeleteOnSubmit(file);
-                }
+                if (fileDinhKemList.Any())
+                    db.tblFileDinhKems.DeleteAllOnSubmit(fileDinhKemList);
 
-                // Xóa nội dung công văn chính
+                var donViNhanList = db.tblNoiDungCV_DonViNhans.Where(d => d.MaCV == maCv).ToList();
+                if (donViNhanList.Any())
+                    db.tblNoiDungCV_DonViNhans.DeleteAllOnSubmit(donViNhanList);
+
+                var guiNhanList = db.tblGuiNhans.Where(g => g.MaCV == maCv).ToList();
+                if (guiNhanList.Any())
+                    db.tblGuiNhans.DeleteAllOnSubmit(guiNhanList);
+
+                // 🔹 Sau đó mới xóa nội dung công văn chính
                 var cv = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCv);
                 if (cv != null)
                 {
@@ -324,7 +290,7 @@ namespace QLCVan
                         this,
                         this.GetType(),
                         "deleteSuccess",
-                        "alert('Đã xóa công văn thành công!');",
+                        "alert('Đã xóa công văn và dữ liệu liên quan thành công!');",
                         true
                     );
 
@@ -336,21 +302,20 @@ namespace QLCVan
                         this,
                         this.GetType(),
                         "notFound",
-                        "alert(' Không tìm thấy công văn cần xóa!');",
+                        "alert('Không tìm thấy công văn cần xóa!');",
                         true
                     );
                 }
             }
             catch (Exception ex)
             {
-                // Ghi log (nếu cần)
                 System.Diagnostics.Debug.WriteLine("Lỗi khi xóa công văn: " + ex.Message);
 
                 ScriptManager.RegisterStartupScript(
                     this,
                     this.GetType(),
                     "deleteError",
-                    "alert(' Có lỗi xảy ra khi xóa công văn!');",
+                    $"alert('Lỗi khi xóa công văn: {ex.Message.Replace("'", "\\'")}');",
                     true
                 );
             }
@@ -382,7 +347,43 @@ namespace QLCVan
                 case "EditCV":
                     if (coQuyenSua)
                     {
-                        Response.Redirect("~/SuaCV.aspx?id=" + maCV);
+                        var cv1 = (from c in db.tblNoiDungCVs
+                                   where c.MaCV == maCV
+                                   select c).FirstOrDefault();
+                        if (cv1.MaNguoiGui == Session["MaNguoiDung"].ToString())
+                        {
+                            if (!string.IsNullOrEmpty(cv1.NguoiDuyet))
+                            {
+                                if (cv1.TrangThai == "Đã được duyệt")
+                                {
+                                    ScriptManager.RegisterStartupScript(
+                                       this,
+                                       this.GetType(),
+                                       "noPermissionEdit",
+                                       "alert('Công văn đã được duyệt không thể sửa!');",
+                                       true);
+                                }
+                                else
+                                {
+                                    Response.Redirect("~/SuaCongVan.aspx?id=" + maCV);
+                                }
+                            }
+                            else
+                            {
+                                Response.Redirect("~/SuaCV.aspx?id=" + maCV);
+                            }
+                        }
+                        else
+                        {
+                            ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "noPermissionEdit",
+                            "alert('Bạn không có quyền sửa công văn!');",
+                            true
+                        );
+                        }
+
                     }
                     else
                     {

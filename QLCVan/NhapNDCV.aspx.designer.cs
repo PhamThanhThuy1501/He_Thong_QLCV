@@ -132,13 +132,13 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Label lblDonViNhan;
 
         /// <summary>
-        /// ddlDonViNhan control.
+        /// lstDonViNhan control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDonViNhan;
+        protected global::System.Web.UI.WebControls.ListBox lstDonViNhan;
 
         /// <summary>
         /// lblNguoiKy control.

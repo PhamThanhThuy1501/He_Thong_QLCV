@@ -288,6 +288,7 @@ border: 1px solid #0b5ed7;
           <asp:Button ID="BtnKhongDuyet" runat="server" Text="Không duyệt" CssClass="btn btn-primary" OnClick="btnKhongDuyet" />
           <asp:Button ID="BtnDuyet" runat="server" Text="Duyệt" CssClass="btn btn-primary" OnClick="btnDuyet" />
           <asp:Button ID="BtnChinhSua" runat="server" Text="Chinh sửa" CssClass="btn btn-primary" OnClick="btnChinhSua" />
+          <asp:Button ID="BtnTrinhLai" runat="server" Text="Trình lại" CssClass="btn btn-primary" OnClick="btnTrinhLai" />
         </div>
       </div>
     </div>

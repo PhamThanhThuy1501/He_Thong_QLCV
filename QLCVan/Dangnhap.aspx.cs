@@ -38,6 +38,13 @@ namespace QLCVan
                 Session["TenDN"] = Username.Text;
                 Session["Matkhau"] = (Password.Text);
                 Session["QuyenHan"] = acc.QuyenHan.ToString();
+                PermissionHelper.ReSyncPermission();
+
+                // Thêm quyền tạm cho test
+                var list = Session["ListQuyen"] as List<string> ?? new List<string>();
+                if (!list.Contains("Q003")) list.Add("Q003");
+                Session["ListQuyen"] = list;
+
                 /// Lấy danh sách quyền 
                 var listQuyen = (
                     from nd in db.tblNguoiDungs

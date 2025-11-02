@@ -1,150 +1,177 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="QuanLyCongVan" Class="InfoDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-	<Table Name="dbo.DanhBaEmail" Member="DanhBaEmails">
-		<Type Name="DanhBaEmail">
-			<Column Name="Email" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="SoLanGui" Type="System.Int32" DbType="Int" CanBeNull="true" />
-			<Column Name="MaPhongBan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-			<Column Name="UserName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Association Name="tblPhongBan_DanhBaEmail" Member="tblPhongBan" ThisKey="MaPhongBan" OtherKey="MaPhongBan" Type="tblPhongBan" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblChucVu" Member="tblChucVus">
-		<Type Name="tblChucVu">
-			<Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="TenChucVu" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-			<Association Name="tblChucVu_tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu_tblNhomQuyen" />
-			<Association Name="tblChucVu_tblNguoiDung" Member="tblNguoiDungs" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblNguoiDung" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens">
-		<Type Name="tblChucVu_tblNhomQuyen">
-			<Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Association Name="tblChucVu_tblChucVu_tblNhomQuyen" Member="tblChucVu" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu" IsForeignKey="true" />
-			<Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen" Member="tblNhomQuyen" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblFileDinhKem" Member="tblFileDinhKems">
-		<Type Name="tblFileDinhKem">
-			<Column Name="FileID" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="Url" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-			<Column Name="Size" Type="System.Int32" DbType="Int" CanBeNull="true" />
-			<Column Name="DateUpload" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-			<Column Name="MaCV" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="TenFile" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-			<Association Name="tblNoiDungCV_tblFileDinhKem" Member="tblNoiDungCV" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblGuiNhan" Member="tblGuiNhans">
-		<Type Name="tblGuiNhan">
-			<Column Name="MaGuiNhan" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" AutoSync="OnInsert" />
-			<Column Name="MaCV" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="false" CanBeNull="false" />
-			<Column Name="MaNguoiDung" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="false" CanBeNull="false" />
-			<Column Name="MaNguoiNhan" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="false" CanBeNull="false" />
-			<Column Name="TrangThaiNhan" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="false" CanBeNull="false" />
-			<Association Name="tblNoiDungCV_tblGuiNhan" Member="tblNoiDungCV" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV" IsForeignKey="true" />
-		</Type>
-	</Table>-
-	<Table Name="dbo.tblLoaiCV" Member="tblLoaiCVs">
-		<Type Name="tblLoaiCV">
-			<Column Name="MaLoaiCV" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-			<Column Name="TenLoaiCV" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
-			<Column Name="PheDuyet" Type="System.String" DbType="NVarChar(1)" CanBeNull="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblMenu" Member="tblMenus">
-		<Type Name="tblMenu">
-			<Column Name="MenuID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-			<Column Name="MenuName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="MenuURL" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNguoiDung" Member="tblNguoiDungs">
-		<Type Name="tblNguoiDung">
-			<Column Name="MaNguoiDung" Type="System.String" DbType="NVarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="Email" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="TenDN" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="MatKhau" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="QuyenHan" Type="System.String" DbType="NChar(20)" CanBeNull="true" />
-			<Column Name="TrangThai" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Column Name="HoTen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-			<Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-			<Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Association Name="tblNguoiDung_tblNhomNguoiDung" Member="tblNhomNguoiDungs" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="tblNhomNguoiDung" />
-			<Association Name="tblChucVu_tblNguoiDung" Member="tblChucVu" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNhom" Member="tblNhoms">
-		<Type Name="tblNhom">
-			<Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-			<Column Name="MoTa" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-			<Association Name="tblNhom_tblNhomNguoiDung" Member="tblNhomNguoiDungs" ThisKey="MaNhom" OtherKey="MaNhom" Type="tblNhomNguoiDung" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNhomNguoiDung" Member="tblNhomNguoiDungs">
-		<Type Name="tblNhomNguoiDung">
-			<Column Name="MaNguoiDung" Type="System.String" DbType="NVarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Association Name="tblNguoiDung_tblNhomNguoiDung" Member="tblNguoiDung" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="tblNguoiDung" IsForeignKey="true" />
-			<Association Name="tblNhom_tblNhomNguoiDung" Member="tblNhom" ThisKey="MaNhom" OtherKey="MaNhom" Type="tblNhom" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNhomQuyen" Member="tblNhomQuyens">
-		<Type Name="tblNhomQuyen">
-			<Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="TenNhomQuyen" Type="System.String" DbType="NVarChar(225)" CanBeNull="true" />
-			<Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblChucVu_tblNhomQuyen" />
-			<Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen_tblQuyen" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens">
-		<Type Name="tblNhomQuyen_tblQuyen">
-			<Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="MaQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
-			<Association Name="tblQuyen_tblNhomQuyen_tblQuyen" Member="tblQuyen" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblQuyen" IsForeignKey="true" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblPhongBan" Member="tblPhongBans">
-		<Type Name="tblPhongBan">
-			<Column Name="MaPhongBan" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="TenPhongBan" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-			<Association Name="tblPhongBan_DanhBaEmail" Member="DanhBaEmails" ThisKey="MaPhongBan" OtherKey="MaPhongBan" Type="DanhBaEmail" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblQuyen" Member="tblQuyens">
-		<Type Name="tblQuyen">
-			<Column Name="MaQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="TenQuyen" Type="System.String" DbType="NVarChar(225)" CanBeNull="true" />
-			<Column Name="MoTa" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
-			<Association Name="tblQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblNhomQuyen_tblQuyen" />
-		</Type>
-	</Table>
-	<Table Name="dbo.tblNoiDungCV" Member="tblNoiDungCVs">
-		<Type Name="tblNoiDungCV">
-			<Column Name="MaCV" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-			<Column Name="MaLoaiCV" Type="System.Int32" DbType="Int" CanBeNull="true" />
-			<Column Name="TieuDeCV" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-			<Column Name="NgayGui" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-			<Column Name="SoCV" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-			<Column Name="CoQuanBanHanh" Type="System.String" DbType="NVarChar(300)" CanBeNull="true" />
-			<Column Name="NgayBanHanh" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-			<Column Name="TrichYeuND" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-			<Column Name="NguoiKy" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
-			<Column Name="NoiNhan" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-			<Column Name="TuKhoa" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-			<Column Name="TrangThai" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-			<Column Name="GuiHayNhan" Type="System.Int32" DbType="Int" CanBeNull="true" />
-			<Column Name="GhiChu" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-			<Column Name="BaoMat" Type="System.String" DbType="NVarChar(1)" CanBeNull="true" />
-			<Column Name="NguoiDuyet" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-			<Association Name="tblNoiDungCV_tblFileDinhKem" Member="tblFileDinhKems" ThisKey="MaCV" OtherKey="MaCV" Type="tblFileDinhKem" />
-			<Association Name="tblNoiDungCV_tblGuiNhan" Member="tblGuiNhans" ThisKey="MaCV" OtherKey="MaCV" Type="tblGuiNhan" />
-		</Type>
-	</Table>
-	<Function Name="dbo.NoiDungCVSelect" Method="NoiDungCVSelect" IsComposable="true">
-		<Parameter Name="searchInfo" Type="System.String" DbType="NVarChar(200)" />
-		<Return Type="object" />
-	</Function>
+<?xml version="1.0" encoding="utf-8"?><Database Name="QuanLyCongVan" Class="InfoDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.tblQuyen" Member="tblQuyens">
+    <Type Name="tblQuyen">
+      <Column Name="MaQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenQuyen" Type="System.String" DbType="NVarChar(225)" CanBeNull="true" />
+      <Column Name="MoTa" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="tblQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblNhomQuyen_tblQuyen" />
+      <Association Name="tblQuyen_tblNhomQuyen_tblQuyen1" Member="tblNhomQuyen_tblQuyens1" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblNhomQuyen_tblQuyen" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DanhBaEmail" Member="DanhBaEmails">
+    <Type Name="DanhBaEmail">
+      <Column Name="Email" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SoLanGui" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MaPhongBan" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="tblPhongBan_DanhBaEmail" Member="tblPhongBan" ThisKey="MaPhongBan" OtherKey="MaPhongBan" Type="tblPhongBan" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblChucVu" Member="tblChucVus">
+    <Type Name="tblChucVu">
+      <Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenChucVu" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="tblChucVu_tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu_tblNhomQuyen" />
+      <Association Name="tblChucVu_tblChucVu_tblNhomQuyen1" Member="tblChucVu_tblNhomQuyens1" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu_tblNhomQuyen" />
+      <Association Name="tblChucVu_tblNguoiDung" Member="tblNguoiDungs" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblNguoiDung" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens">
+    <Type Name="tblChucVu_tblNhomQuyen">
+      <Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="tblChucVu_tblChucVu_tblNhomQuyen" Member="tblChucVu" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu" IsForeignKey="true" />
+      <Association Name="tblChucVu_tblChucVu_tblNhomQuyen1" Member="tblChucVu1" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu" IsForeignKey="true" />
+      <Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen" Member="tblNhomQuyen" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
+      <Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen1" Member="tblNhomQuyen1" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblDonVi" Member="tblDonVis">
+    <Type Name="tblDonVi">
+      <Column Name="MaDonVi" Type="System.String" DbType="NVarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenDonVi" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Association Name="tblDonVi_tblNguoiDung" Member="tblNguoiDungs" ThisKey="MaDonVi" OtherKey="MaDonVi" Type="tblNguoiDung" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblFileDinhKem" Member="tblFileDinhKems">
+    <Type Name="tblFileDinhKem">
+      <Column Name="FileID" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Url" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="Size" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DateUpload" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MaCV" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="TenFile" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="tblNoiDungCV_tblFileDinhKem" Member="tblNoiDungCV" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblGuiNhan" Member="tblGuiNhans">
+    <Type Name="tblGuiNhan">
+      <Column Name="MaCV" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MaNguoiDung" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaGuiNhan" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TrangThaiNhan" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MaNguoiNhan" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="tblNoiDungCV_tblGuiNhan" Member="tblNoiDungCV" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblLoaiCV" Member="tblLoaiCVs">
+    <Type Name="tblLoaiCV">
+      <Column Name="MaLoaiCV" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TenLoaiCV" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="PheDuyet" Type="System.String" DbType="NVarChar(1)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblMenu" Member="tblMenus">
+    <Type Name="tblMenu">
+      <Column Name="MenuID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MenuName" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MenuURL" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNguoiDung" Member="tblNguoiDungs">
+    <Type Name="tblNguoiDung">
+      <Column Name="MaNguoiDung" Type="System.String" DbType="NVarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="TenDN" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MatKhau" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="QuyenHan" Type="System.String" DbType="NChar(20)" CanBeNull="true" />
+      <Column Name="TrangThai" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HoTen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaChucVu" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MaDonVi" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Association Name="tblNguoiDung_tblNhomNguoiDung" Member="tblNhomNguoiDungs" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="tblNhomNguoiDung" />
+      <Association Name="tblChucVu_tblNguoiDung" Member="tblChucVu" ThisKey="MaChucVu" OtherKey="MaChucVu" Type="tblChucVu" IsForeignKey="true" />
+      <Association Name="tblDonVi_tblNguoiDung" Member="tblDonVi" ThisKey="MaDonVi" OtherKey="MaDonVi" Type="tblDonVi" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNhom" Member="tblNhoms">
+    <Type Name="tblNhom">
+      <Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MoTa" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Association Name="tblNhom_tblNhomNguoiDung" Member="tblNhomNguoiDungs" ThisKey="MaNhom" OtherKey="MaNhom" Type="tblNhomNguoiDung" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNhomNguoiDung" Member="tblNhomNguoiDungs">
+    <Type Name="tblNhomNguoiDung">
+      <Column Name="MaNguoiDung" Type="System.String" DbType="NVarChar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaNhom" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="tblNguoiDung_tblNhomNguoiDung" Member="tblNguoiDung" ThisKey="MaNguoiDung" OtherKey="MaNguoiDung" Type="tblNguoiDung" IsForeignKey="true" />
+      <Association Name="tblNhom_tblNhomNguoiDung" Member="tblNhom" ThisKey="MaNhom" OtherKey="MaNhom" Type="tblNhom" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNhomQuyen" Member="tblNhomQuyens">
+    <Type Name="tblNhomQuyen">
+      <Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenNhomQuyen" Type="System.String" DbType="NVarChar(225)" CanBeNull="true" />
+      <Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen" Member="tblChucVu_tblNhomQuyens" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblChucVu_tblNhomQuyen" />
+      <Association Name="tblNhomQuyen_tblChucVu_tblNhomQuyen1" Member="tblChucVu_tblNhomQuyens1" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblChucVu_tblNhomQuyen" />
+      <Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen_tblQuyen" />
+      <Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen1" Member="tblNhomQuyen_tblQuyens1" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen_tblQuyen" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNhomQuyen_tblQuyen" Member="tblNhomQuyen_tblQuyens">
+    <Type Name="tblNhomQuyen_tblQuyen">
+      <Column Name="MaNhomQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaQuyen" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen" Member="tblNhomQuyen" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
+      <Association Name="tblNhomQuyen_tblNhomQuyen_tblQuyen1" Member="tblNhomQuyen1" ThisKey="MaNhomQuyen" OtherKey="MaNhomQuyen" Type="tblNhomQuyen" IsForeignKey="true" />
+      <Association Name="tblQuyen_tblNhomQuyen_tblQuyen" Member="tblQuyen" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblQuyen" IsForeignKey="true" />
+      <Association Name="tblQuyen_tblNhomQuyen_tblQuyen1" Member="tblQuyen1" ThisKey="MaQuyen" OtherKey="MaQuyen" Type="tblQuyen" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNoiDungCV" Member="tblNoiDungCVs">
+    <Type Name="tblNoiDungCV">
+      <Column Name="MaCV" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MaLoaiCV" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="TieuDeCV" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="NgayGui" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="SoCV" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="CoQuanBanHanh" Type="System.String" DbType="NVarChar(300)" CanBeNull="true" />
+      <Column Name="NgayBanHanh" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="TrichYeuND" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="NguoiKy" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+      <Column Name="NoiNhan" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="TuKhoa" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="TrangThai" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="GuiHayNhan" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="GhiChu" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="BaoMat" Type="System.String" DbType="NVarChar(1)" CanBeNull="true" />
+      <Column Name="MaNguoiGui" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="MaNguoiNhan" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="NguoiDuyet" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Association Name="tblNoiDungCV_tblFileDinhKem" Member="tblFileDinhKems" ThisKey="MaCV" OtherKey="MaCV" Type="tblFileDinhKem" />
+      <Association Name="tblNoiDungCV_tblGuiNhan" Member="tblGuiNhans" ThisKey="MaCV" OtherKey="MaCV" Type="tblGuiNhan" />
+      <Association Name="tblNoiDungCV_tblNoiDungCV_DonViNhan" Member="tblNoiDungCV_DonViNhans" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV_DonViNhan" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblNoiDungCV_DonViNhan" Member="tblNoiDungCV_DonViNhans">
+    <Type Name="tblNoiDungCV_DonViNhan">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="MaCV" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MaDonViNhan" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="tblNoiDungCV_tblNoiDungCV_DonViNhan" Member="tblNoiDungCV" ThisKey="MaCV" OtherKey="MaCV" Type="tblNoiDungCV" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tblPhongBan" Member="tblPhongBans">
+    <Type Name="tblPhongBan">
+      <Column Name="MaPhongBan" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TenPhongBan" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="tblPhongBan_DanhBaEmail" Member="DanhBaEmails" ThisKey="MaPhongBan" OtherKey="MaPhongBan" Type="DanhBaEmail" />
+    </Type>
+  </Table>
+  <Function Name="dbo.NoiDungCVSelect" Method="NoiDungCVSelect" IsComposable="true">
+    <Parameter Name="searchInfo" Type="System.String" DbType="NVarChar(200)" />
+    <Return Type="object" />
+  </Function>
 </Database>

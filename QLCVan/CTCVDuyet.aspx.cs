@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Net.Mail;
+using System.Linq.Expressions;
 
 namespace QLCVan
 {
@@ -50,14 +51,39 @@ namespace QLCVan
                 if (gn.MaNguoiNhan == maNguoiDung)
                 {
                     trangThaiHienThi = gn.TrangThaiNhan;
+                    BtnChinhSua.Visible = false;
+                    BtnTrinhLai.Visible = false;
                 }
                 if (tk.MaNguoiGui == maNguoiDung)
                 {
                     trangThaiHienThi = tk.TrangThai;
                     BtnDuyet.Visible = false;
                     BtnKhongDuyet.Visible = false;
+                    BtnTrinhLai.Visible = false;
                     BtnChinhSua.Visible = true;
                 }
+
+                switch (trangThaiHienThi)
+                {
+                    case "Đã duyệt":
+                        BtnDuyet.Visible = false;
+                        BtnKhongDuyet.Visible = false;
+                        break;
+                    case "Đã được duyệt":
+                        BtnChinhSua.Visible = false;
+                        break;
+                    case "Không duyệt":
+                        BtnDuyet.Visible = false;
+                        BtnKhongDuyet.Visible = false;
+                        break;
+                    case "Không được duyệt":
+                        BtnDuyet.Visible = false;
+                        BtnKhongDuyet.Visible = false;
+                        BtnChinhSua.Visible = true;
+                        BtnTrinhLai.Visible = true;
+                        break;
+                }
+
 
 
                 lblTrangThai.Text = trangThaiHienThi;
@@ -91,44 +117,45 @@ namespace QLCVan
 
         protected void btnQuayLai(object sender, EventArgs e)
         {
-            //    string maCongVan = Request.QueryString["id"];
-            //    if (string.IsNullOrEmpty(maCongVan)) return;
-
-            //    tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
-            //    if (cv1 != null)
-            //    {
-            //        cv1.TrangThai = "Đã duyệt";
-            //        db.SubmitChanges();
-            //    }
             Response.Redirect($"Trangchu.aspx");
         }
 
         protected void btnKhongDuyet(object sender, EventArgs e)
         {
-            //    string maCongVan = Request.QueryString["id"];
-            //    if (string.IsNullOrEmpty(maCongVan)) return;
+            string maCongVan = Request.QueryString["id"];
+            if (string.IsNullOrEmpty(maCongVan)) return;
 
-            //    tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
-            //    if (cv1 != null)
-            //    {
-            //        cv1.TrangThai = "Đã duyệt";
-            //        db.SubmitChanges();
-            //    }
-            //Response.Redirect($"Trangchu.aspx");
+            tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv1 != null)
+            {
+                cv1.TrangThai = "Không được duyệt";
+            }
+            tblGuiNhan cv = db.tblGuiNhans.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv != null)
+            {
+                cv.TrangThaiNhan = "Không duyệt";
+            }
+            db.SubmitChanges();
+            Response.Redirect($"Trangchu.aspx");
         }
 
         protected void btnDuyet(object sender, EventArgs e)
         {
-            //    string maCongVan = Request.QueryString["id"];
-            //    if (string.IsNullOrEmpty(maCongVan)) return;
+            string maCongVan = Request.QueryString["id"];
+            if (string.IsNullOrEmpty(maCongVan)) return;
 
-            //    tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
-            //    if (cv1 != null)
-            //    {
-            //        cv1.TrangThai = "Đã duyệt";
-            //        db.SubmitChanges();
-            //    }
-            //Response.Redirect($"Trangchu.aspx");
+            tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv1 != null)
+            {
+                cv1.TrangThai = "Đã được duyệt";
+            }
+            tblGuiNhan cv = db.tblGuiNhans.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv != null)
+            {
+                cv.TrangThaiNhan = "Đã duyệt";
+            }
+            db.SubmitChanges();
+            Response.Redirect($"Trangchu.aspx");
         }
 
         protected void btnChinhSua(object sender, EventArgs e)
@@ -143,6 +170,25 @@ namespace QLCVan
             //        db.SubmitChanges();
             //    }
             //Response.Redirect($"Trangchu.aspx");
+        }
+
+        protected void btnTrinhLai(object sender, EventArgs e)
+        {
+            string maCongVan = Request.QueryString["id"];
+            if (string.IsNullOrEmpty(maCongVan)) return;
+
+            tblNoiDungCV cv1 = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv1 != null)
+            {
+                cv1.TrangThai = "Đang trình";
+            }
+            tblGuiNhan cv = db.tblGuiNhans.SingleOrDefault(t => t.MaCV == maCongVan);
+            if (cv != null)
+            {
+                cv.TrangThaiNhan = "Chờ duyệt";
+            }
+            db.SubmitChanges();
+            Response.Redirect($"Trangchu.aspx");
         }
     }
 }

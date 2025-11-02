@@ -24,11 +24,14 @@ namespace QLCVan
             {
                 Response.Redirect("Dangnhap.aspx");
             }
+
             //if (!PermissionHelper.HasPermission(maQuyenYeuCau))
             //{
             //    Response.Write("<script>alert('Bạn không có quyền truy cập trang này!'); window.history.back();</script>");
             //    Response.End();
             //}
+
+
             if (!IsPostBack)
             {
                 LoadData();
