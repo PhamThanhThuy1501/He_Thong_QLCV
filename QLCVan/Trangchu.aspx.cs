@@ -24,9 +24,27 @@ namespace QLCVan
 
             if (!IsPostBack)
             {
+                LoadLoaiCongVan(); // ✅ load dropdown từ DB
                 LoadData();
             }
 
+        }
+
+        // ✅ HÀM TẢI LOẠI CÔNG VĂN TỪ DB
+        private void LoadLoaiCongVan()
+        {
+            var loaiCVs = db.tblLoaiCVs
+                            .OrderBy(x => x.TenLoaiCV)
+                            .Select(x => new { x.MaLoaiCV, x.TenLoaiCV })
+                            .ToList();
+
+            ddlLoai.DataSource = loaiCVs;
+            ddlLoai.DataTextField = "TenLoaiCV";
+            ddlLoai.DataValueField = "MaLoaiCV";
+            ddlLoai.DataBind();
+
+            // ✅ thêm dòng "--Tất cả--" giống bản cũ
+            ddlLoai.Items.Insert(0, new ListItem("-- Tất cả --", ""));
         }
         private void LoadData()
         {
@@ -239,7 +257,7 @@ namespace QLCVan
             if (!string.IsNullOrEmpty(tieuDe))
                 q = q.Where(x => x.cv.TieuDeCV.Contains(tieuDe));
 
-            if (!string.IsNullOrEmpty(loai) && loai != "0")
+            if (!string.IsNullOrEmpty(loai))
             {
                 int loaiCV = int.Parse(loai);
                 q = q.Where(x => x.cv.MaLoaiCV == loaiCV);
