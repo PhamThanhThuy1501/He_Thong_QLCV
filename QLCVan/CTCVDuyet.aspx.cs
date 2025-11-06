@@ -60,7 +60,7 @@ namespace QLCVan
                     BtnDuyet.Visible = false;
                     BtnKhongDuyet.Visible = false;
                     BtnTrinhLai.Visible = false;
-                    BtnChinhSua.Visible = true;
+                    BtnChinhSua.Visible = false;
                 }
 
                 switch (trangThaiHienThi)

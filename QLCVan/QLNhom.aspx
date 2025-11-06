@@ -71,9 +71,106 @@
     .btn-add{ height:36px; border-radius:6px; padding:6px 14px; font-size:14px; font-weight:500; }
 
     /* Pager */
-    .pager a,.pager span{display:inline-block;padding:3px 10px;border:1px solid #ddd;margin:0 3px;border-radius:3px;text-decoration:none}
-    .pager span{background:#c00;color:#fff;border-color:#c00}
-    .pager a{color:#0f172a}
+   /* === XÓA VIỀN & NỀN XÁM PHÂN TRANG === */
+/* ==== PHÂN TRANG KHÔNG GẠCH CHÂN, KHÔNG ĐỔI MÀU, KHÔNG NỀN ==== */
+.grid-pager {
+  background: transparent !important;
+  border: none !important;
+  text-align: center !important;
+  margin-top: 12px;
+  padding: 8px 0;
+}
+
+.grid-pager table {
+  
+  border-collapse: separate;
+  border-spacing: 6px;
+  background: transparent !important;
+  border-spacing: 25px;
+  margin: 15px auto 10px auto !important;  /* 👈 tạo khoảng cách 25px giữa bảng và phân trang */
+}
+
+.grid-pager td {
+  border: none !important;
+  background: transparent !important;
+  padding: 0;
+}
+
+/* Các nút trang */
+.grid-pager a,
+.grid-pager span {
+  display: inline-block;
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  color: #333;
+  background: #fff;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+}
+
+/* Hover – chỉ hơi đổi nền xám nhẹ */
+.grid-pager a:hover {
+  background: #f8f9fa !important;
+  color: #333 !important;
+  border-color: #ccc;
+  text-decoration: none !important;
+}
+
+/* Khi click (active) hoặc đang được chọn: giữ nguyên màu chữ đen, nền trắng */
+.grid-pager a:active,
+.grid-pager span {
+  background: #fff !important;
+  color: #000 !important;
+  border-color: #ccc;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+/* === PHÂN TRANG NGOÀI BẢNG === */
+.pager-out {
+    width: 70%;
+    margin: 22px auto 0 auto;
+    text-align: center;
+}
+
+.pager-out a,
+.pager-out span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    color: #4b5563;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    margin: 0 12px;
+}
+
+.pager-out span {
+    background: #fff;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.pager-out a:hover {
+    border-color: #d1d5db;
+}
+
+/* ==== XÓA MÀU XÁM XEN KẼ TRONG BẢNG ==== */
+/* ==== XÓA MÀU XÁM XEN KẼ TRONG GRIDVIEW ==== */
+
+
+
+
 
     .cv-head{ font-weight:700; }
     .table {
@@ -117,73 +214,80 @@
         </button>
       </div>
 
-      <!-- Bảng -->
-     <asp:GridView ID="gvQLNhom" runat="server" AutoGenerateColumns="False"
-    CssClass="table table-bordered table-striped table-hover"
+  <!-- BẢNG -->
+<asp:GridView ID="gvQLNhom" runat="server"
+    AutoGenerateColumns="False"
+    CssClass="table table-bordered table-hover gridview"
     HeaderStyle-CssClass="grid-header-red"
-    Width="60%" CellPadding="4" ForeColor="#333333"
     DataKeyNames="MaDonVi"
     OnRowDeleting="rowDeleting"
     OnRowCancelingEdit="rowCancelingEdit"
     OnRowEditing="rowEditing"
     OnRowUpdating="rowUpdating"
     OnRowCommand="rowCommand"
-    OnRowDataBound="gvQLNhom_RowDataBound"   
+    OnRowDataBound="gvQLNhom_RowDataBound"
     AllowPaging="True" PageSize="5"
-    OnPageIndexChanging="gvQLNhom_PageIndexChanging">
+    OnPageIndexChanging="gvQLNhom_PageIndexChanging"
+    PagerStyle-CssClass="pagination pagination-source"
+    BorderStyle="None">
 
     <PagerSettings Mode="Numeric" Position="Bottom" PageButtonCount="5" />
-    <PagerStyle CssClass="pager" HorizontalAlign="Center" />
+
     <Columns>
+        <asp:TemplateField HeaderText="Mã đơn vị">
+            <ItemTemplate>
+                <asp:Label ID="lblMaDonVi" runat="server" Text='<%# Eval("MaDonVi") %>'></asp:Label>
+            </ItemTemplate>
+        </asp:TemplateField>
 
-      <asp:TemplateField HeaderText="Mã đơn vị">
-        <HeaderStyle HorizontalAlign="Center" />
-        <ItemTemplate>
-          <asp:Label ID="lblMaDonVi" runat="server" Text='<%# Eval("MaDonVi") %>'></asp:Label>
-        </ItemTemplate>
-      </asp:TemplateField>
+        <asp:TemplateField HeaderText="Tên đơn vị">
+            <ItemTemplate>
+                <asp:Label ID="lblTenDonVi" runat="server" Text='<%# Eval("TenDonVi") %>'></asp:Label>
+            </ItemTemplate>
+            <EditItemTemplate>
+                <asp:TextBox ID="txtTenNhom" runat="server" CssClass="form-control"
+                    Text='<%# Eval("TenDonVi") %>'></asp:TextBox>
+            </EditItemTemplate>
+        </asp:TemplateField>
 
-      <asp:TemplateField HeaderText="Tên đơn vị">
-        <HeaderStyle HorizontalAlign="Center" />
-        <ItemTemplate>
-          <asp:Label ID="lblTenDonVi" runat="server" Text='<%# Eval("TenDonVi") %>'></asp:Label>
-        </ItemTemplate>
-        <EditItemTemplate>
-          <asp:TextBox ID="txtTenNhom" runat="server" CssClass="form-control"
-                       Text='<%# Eval("TenDonVi") %>'></asp:TextBox>
-        </EditItemTemplate>
-      </asp:TemplateField>
+        <asp:TemplateField HeaderText="Thao tác">
+            <ItemTemplate>
+                <div style="display:flex; justify-content:center; align-items:center; gap:12px;">
+                    <!-- Nút Sửa -->
+                    <asp:LinkButton ID="btnEdit" runat="server"
+                        CommandName="Edit" CommandArgument='<%# Eval("MaDonVi") %>'
+                        ToolTip="Sửa"
+                        Style="border:1px solid #ccc; border-radius:8px; padding:6px 10px; background-color:#fff;">
+                        <i class="fas fa-pen" style="color:#0B57D0; font-size:18px;"></i>
+                    </asp:LinkButton>
 
-      <asp:TemplateField HeaderText="Thao tác">
-        <HeaderStyle HorizontalAlign="Center" />
-        <ItemTemplate>
-          <asp:LinkButton ID="btnEdit" runat="server"
-              CommandName="Edit" CommandArgument='<%# Eval("MaDonVi") %>'
-              CssClass="btn btn-warning btn-sm me-1" ToolTip="Sửa">
-            <i class="fa fa-edit"></i>
-          </asp:LinkButton>
+                    <!-- Nút Xóa -->
+                    <asp:LinkButton ID="btnDelete" runat="server"
+                        ToolTip="Xóa"
+                        Style="border:1px solid #ccc; border-radius:8px; padding:6px 10px; background-color:#fff;"
+                        OnClientClick='<%# "return openDeleteModal(\"" + Eval("MaDonVi") + "\");" %>'>
+                        <i class="fas fa-trash" style="color:#E60000; font-size:18px;"></i>
+                    </asp:LinkButton>
+                </div>
+            </ItemTemplate>
 
-          <!-- KHÔNG đặt OnClientClick ở đây để tránh lỗi quote -->
-          <asp:LinkButton ID="btnDelete" runat="server"
-              CssClass="btn btn-danger btn-sm" ToolTip="Xóa">
-            <i class="fa fa-trash"></i>
-          </asp:LinkButton>
-        </ItemTemplate>
-
-        <EditItemTemplate>
-          <asp:LinkButton ID="btnUpdate" runat="server"
-              CommandName="Update" CssClass="btn btn-success btn-sm me-1" ToolTip="Lưu">
-            <i class="fa fa-check"></i>
-          </asp:LinkButton>
-          <asp:LinkButton ID="btnCancel" runat="server"
-              CommandName="Cancel" CssClass="btn btn-secondary btn-sm" ToolTip="Hủy">
-            <i class="fa fa-times"></i>
-          </asp:LinkButton>
-        </EditItemTemplate>
-      </asp:TemplateField>
-
+            <EditItemTemplate>
+                <asp:LinkButton ID="btnUpdate" runat="server"
+                    CommandName="Update" CssClass="btn btn-success btn-sm me-1" ToolTip="Lưu">
+                    <i class="fa fa-check"></i>
+                </asp:LinkButton>
+                <asp:LinkButton ID="btnCancel" runat="server"
+                    CommandName="Cancel" CssClass="btn btn-secondary btn-sm" ToolTip="Hủy">
+                    <i class="fa fa-times"></i>
+                </asp:LinkButton>
+            </EditItemTemplate>
+        </asp:TemplateField>
     </Columns>
 </asp:GridView>
+
+<!-- Phân trang ngoài bảng -->
+<div id="pagerOutside" class="pager-out"></div>
+
 
     </center>
 
@@ -305,4 +409,35 @@
         toast.show();
     }
 </script>
+    <script type="text/javascript">
+        (function () {
+            function clonePager() {
+                var grid = document.getElementById('<%= gvQLNhom.ClientID %>');
+                if (!grid) return;
+
+                var src = grid.querySelector('.pagination');
+                var out = document.getElementById('pagerOutside');
+                if (!src || !out) return;
+
+                out.innerHTML = '';
+                var items = src.querySelectorAll('a, span');
+                items.forEach(function (el) {
+                    out.appendChild(el.cloneNode(true));
+                });
+
+                src.style.display = 'none';
+            }
+
+            if (document.readyState === 'loading')
+                document.addEventListener('DOMContentLoaded', clonePager);
+            else
+                clonePager();
+
+            if (typeof (Sys) !== 'undefined' &&
+                Sys.WebForms && Sys.WebForms.PageRequestManager) {
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(clonePager);
+            }
+        })();
+    </script>
+
 </asp:Content>

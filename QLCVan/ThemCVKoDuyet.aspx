@@ -174,19 +174,19 @@
     <script src="Scripts/datepicker/jquery-ui.js" type="text/javascript"></script>
     <link href="Scripts/datepicker/jquery-ui.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
-      jQuery(function ($) {
-        $.datepicker.regional['vi'] = {
-          closeText: 'Đóng', prevText: '&#x3c;Trước', nextText: 'Tiếp&#x3e;', currentText: 'Hôm nay',
-          monthNames: ['Tháng Một','Tháng Hai','Tháng Ba','Tháng Tư','Tháng Năm','Tháng Sáu','Tháng Bảy','Tháng Tám','Tháng Chín','Tháng Mười','Th.Mười Một','Th.Mười Hai'],
-          monthNamesShort: ['Th1','Th2','Th3','Th4','Th5','Th6','Th7','Th8','Th9','Th10','Th11','Th12'],
-          dayNames: ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'],
-          dayNamesShort: ['CN','T2','T3','T4','T5','T6','T7'],
-          dayNamesMin: ['CN','T2','T3','T4','T5','T6','T7'],
-          weekHeader: 'Tu', dateFormat: 'dd/mm/yy', firstDay: 0, isRTL: false, showMonthAfterYear: false, yearSuffix: ''
-        };
-        $.datepicker.setDefaults($.datepicker.regional['vi']);
-        $('#<%= txtNgayBanHanh.ClientID %>').datepicker({ changeMonth:true, changeYear:true, yearRange:'2000:2040' });
-        $('#<%= txtNgayGui.ClientID %>').datepicker({ changeMonth:true, changeYear:true, yearRange:'2000:2040' });
+        jQuery(function ($) {
+            $.datepicker.regional['vi'] = {
+                closeText: 'Đóng', prevText: '&#x3c;Trước', nextText: 'Tiếp&#x3e;', currentText: 'Hôm nay',
+                monthNames: ['Tháng Một', 'Tháng Hai', 'Tháng Ba', 'Tháng Tư', 'Tháng Năm', 'Tháng Sáu', 'Tháng Bảy', 'Tháng Tám', 'Tháng Chín', 'Tháng Mười', 'Th.Mười Một', 'Th.Mười Hai'],
+                monthNamesShort: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
+                dayNames: ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'],
+                dayNamesShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                dayNamesMin: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                weekHeader: 'Tu', dateFormat: 'dd/mm/yy', firstDay: 0, isRTL: false, showMonthAfterYear: false, yearSuffix: ''
+            };
+            $.datepicker.setDefaults($.datepicker.regional['vi']);
+            $('#<%= txtNgayBanHanh.ClientID %>').datepicker({ changeMonth:true, changeYear:true, yearRange:'2000:2040' });
+        $('#<%= txtNgayGui.ClientID %>').datepicker({ changeMonth: true, changeYear: true, yearRange: '2000:2040' });
       });
     </script>
 </asp:Content>

@@ -9,8 +9,11 @@
 
 namespace QLCVan
 {
+
+
     public partial class LoaiCV
     {
+
         /// <summary>
         /// hfEditID control.
         /// </summary>
@@ -264,15 +267,6 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
 
         /// <summary>
-        /// btnConfirmDelete control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
-
-        /// <summary>
         /// btnCancelDelete control.
         /// </summary>
         /// <remarks>
@@ -280,5 +274,14 @@ namespace QLCVan
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCancelDelete;
+
+        /// <summary>
+        /// btnConfirmDelete control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnConfirmDelete;
     }
 }

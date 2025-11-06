@@ -132,6 +132,15 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.Repeater rptfilecv;
 
         /// <summary>
+        /// litNoFiles control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litNoFiles;
+
+        /// <summary>
         /// BtnQuayLai control.
         /// </summary>
         /// <remarks>

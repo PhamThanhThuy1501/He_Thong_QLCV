@@ -97,9 +97,90 @@ body { background:#f3f4f6; font-family:"Segoe UI",Arial,sans-serif; }
 .table td:last-child,
 .actions *{ border:none!important; outline:none!important; }
 
+/* ===== PHÂN TRANG: CẢ 2 Ô ĐỀU CÓ VIỀN ===== */
+/* === PHÂN TRANG Ô VUÔNG ĐƠN GIẢN, CÁCH NHAU NHẸ === */
+/* === PHÂN TRANG Ô VUÔNG ĐƠN GIẢN, CÁCH NHAU NHẸ === */
+.gridview .pager {
+    text-align: center;
+    padding: 20px 0;
+    background: #fff;
+}
 
+.gridview .pager table {
+    margin: 0 auto;
+    border-collapse: separate !important; /* không dính viền nhau */
+    border-spacing: 8px;                  /* khoảng cách giữa các ô */
+    border: none !important;              /* bỏ viền ngoài bảng */
+}
+
+.gridview .pager td {
+    border: none !important;              /* bỏ viền cell */
+}
+
+.gridview .pager a,
+.gridview .pager span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;              /* vuông đều */
+    height: 40px;
+    border: 1px solid #d1d5db; /* viền xám nhạt */
+    border-radius: 4px;       /* bo nhẹ góc */
+    background: #fff;
+    color: #4b5563;           /* chữ xám */
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/* Trang hiện tại – giữ nguyên, không đổi màu */
+.gridview .pager span {
+    background: #fff;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+/* Không đổi màu khi hover */
+.gridview .pager a:hover {
+    border-color: #d1d5db;
+}
+
+/* === PHÂN TRANG NGOÀI BẢNG === */
+.pager-out {
+    width: 70%;
+    margin: 22px auto 0 auto;
+    text-align: center;
+}
+
+.pager-out a,
+.pager-out span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    color: #4b5563;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    margin: 0 12px;
+}
+
+.pager-out span {
+    background: #fff;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.pager-out a:hover {
+    border-color: #d1d5db;
+}
 
   </style>
+
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -149,45 +230,51 @@ body { background:#f3f4f6; font-family:"Segoe UI",Arial,sans-serif; }
     </div>
 
     <!-- BẢNG -->
-    <div class="table-wrapper">
-      <asp:GridView ID="gvNguoiDung" runat="server" AutoGenerateColumns="False"
-        CssClass="table table-bordered"
-        DataKeyNames="MaNguoiDung"
-        AllowPaging="True" PageSize="5"
-        OnPageIndexChanging="gvNguoiDung_PageIndexChanging"
-        PagerStyle-CssClass="grid-pager">
+     <!-- BẢNG -->
+<div class="table-wrapper">
+  <asp:GridView ID="gvNguoiDung" runat="server" AutoGenerateColumns="False"
+      CssClass="table table-bordered gridview"
+      DataKeyNames="MaNguoiDung"
+      AllowPaging="True" PageSize="5"
+      OnPageIndexChanging="gvNguoiDung_PageIndexChanging"
+      PagerStyle-CssClass="pagination pagination-source">
 
-        <PagerSettings Mode="Numeric" Position="Bottom" PageButtonCount="5" />
+      <PagerSettings Mode="Numeric" Position="Bottom" PageButtonCount="5" />
 
-        <Columns>
+      <Columns>
           <asp:BoundField DataField="TenDN" HeaderText="Tên đăng nhập" />
           <asp:BoundField DataField="Email" HeaderText="Email" />
           <asp:BoundField DataField="TenNhom" HeaderText="Đơn vị" />
           <asp:BoundField DataField="TenChucVu" HeaderText="Chức vụ" />
 
           <asp:TemplateField HeaderText="Trạng thái">
-            <ItemTemplate>
-              <asp:Literal ID="litStatus" runat="server" Mode="PassThrough"
-                Text='<%# Convert.ToBoolean(Eval("TrangThai"))
-                      ? "<span class=\"badge-status badge-active\">Đang kích hoạt</span>"
-                      : "<span class=\"badge-status badge-locked\">Đã khóa</span>" %>' />
-            </ItemTemplate>
+              <ItemTemplate>
+                  <asp:Literal ID="litStatus" runat="server" Mode="PassThrough"
+                      Text='<%# Convert.ToBoolean(Eval("TrangThai"))
+                            ? "<span class=\"badge-status badge-active\">Đang kích hoạt</span>"
+                            : "<span class=\"badge-status badge-locked\">Đã khóa</span>" %>' />
+              </ItemTemplate>
           </asp:TemplateField>
 
           <asp:TemplateField HeaderText="Thao tác">
-            <ItemTemplate>
-              <a href='<%# "SuaNguoiDung.aspx?id=" + Eval("MaNguoiDung") %>' class="btn-action" title="Sửa">
-                <i class="fa fa-pen"></i>
-              </a>
-              <button type="button" class="btn btn-delete" data-bs-toggle="modal"
-                      data-bs-target="#confirmDeleteModal"
-                      onclick="setDeleteUser('<%# Eval("MaNguoiDung") %>')">
-                <i class="fa fa-trash"></i>
-              </button>
-            </ItemTemplate>
+              <ItemTemplate>
+                  <a href='<%# "SuaNguoiDung.aspx?id=" + Eval("MaNguoiDung") %>' class="btn-action" title="Sửa">
+                      <i class="fa fa-pen"></i>
+                  </a>
+                  <button type="button" class="btn btn-delete" data-bs-toggle="modal"
+                          data-bs-target="#confirmDeleteModal"
+                          onclick="setDeleteUser('<%# Eval("MaNguoiDung") %>')">
+                      <i class="fa fa-trash"></i>
+                  </button>
+              </ItemTemplate>
           </asp:TemplateField>
-        </Columns>
-      </asp:GridView>
+      </Columns>
+  </asp:GridView>
+</div>
+
+<!-- Phân trang ngoài bảng -->
+<div id="pagerOutside" class="pager-out"></div>
+
     </div>
 
     <!-- Modal xác nhận xoá -->
@@ -250,4 +337,36 @@ body { background:#f3f4f6; font-family:"Segoe UI",Arial,sans-serif; }
       }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            function clonePager() {
+                var grid = document.getElementById('<%= gvNguoiDung.ClientID %>');
+                if (!grid) return;
+
+                var src = grid.querySelector('.pagination'); // pager mặc định
+                var out = document.getElementById('pagerOutside');
+                if (!src || !out) return;
+
+                out.innerHTML = '';
+                var items = src.querySelectorAll('a, span');
+                items.forEach(function (el) {
+                    out.appendChild(el.cloneNode(true));
+                });
+
+                src.style.display = 'none';
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', clonePager);
+            } else {
+                clonePager();
+            }
+
+            if (typeof (Sys) !== 'undefined' &&
+                Sys.WebForms && Sys.WebForms.PageRequestManager) {
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(clonePager);
+            }
+        })();
+    </script>
+
 </asp:Content>

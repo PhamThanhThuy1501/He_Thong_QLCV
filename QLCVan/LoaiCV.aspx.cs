@@ -124,6 +124,11 @@ namespace QLCVan
                     load_LoaiCV();
                     mpeEdit.Hide();
                     hfEditID.Value = "";
+                    // ✅ Toast
+                    ScriptManager.RegisterStartupScript(
+                        this, GetType(), "toastUpd",
+                        "showToast('Cập nhật loại công văn thành công!', 'success');", true
+                    );
                 }
             }
         }
@@ -141,10 +146,13 @@ namespace QLCVan
                     load_LoaiCV();
                     mpeDelete.Hide();
                     hfDeleteID.Value = "";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "toastDel",
+                "showToast('Xóa loại công văn thành công!', 'success');", true);
                 }
             }
         }
 
+        
         protected void btnAdd_Click(object sender, EventArgs e)
         {
             string maStr = txtMaLoaiCV.Text.Trim();
@@ -172,33 +180,46 @@ namespace QLCVan
 
                             db.tblLoaiCVs.InsertOnSubmit(pr);
                             db.SubmitChanges();
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "ok", "alert('Đã thêm thành công'); closeAddModal();", true);
                             txtMaLoaiCV.Text = "";
                             txtTenLoaiCV.Text = "";
                             load_LoaiCV();
+                            // Đóng modal thêm (giữ lại nếu anh đang dùng)
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "closeAdd", "closeAddModal();", true);
+
+                            // ✅ Toast
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "toastAdd",
+                                "showToast('Thêm loại công văn thành công!', 'success');", true);
                         }
                         else
                         {
-                            ScriptManager.RegisterStartupScript(this, this.GetType(), "trung", "alert('Mã loại công văn đã tồn tại!');", true);
                             mpeAdd.Show();
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "toastDup",
+                                "showToast('Mã loại công văn đã tồn tại!', 'error');", true);
+
                         }
                     }
                     catch (Exception ex)
                     {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "err", $"alert('Lỗi khi thêm: {ex.Message}');", true);
                         mpeAdd.Show();
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "toastErr",
+                            "showToast('Lỗi khi thêm!', 'error');", true);
+
                     }
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "loi", "alert('Mã loại phải là số!');", true);
                     mpeAdd.Show();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "toastNum",
+                        "showToast('Mã loại phải là số!', 'error');", true);
+
                 }
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "rong", "alert('Vui lòng nhập đầy đủ');", true);
                 mpeAdd.Show();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "toastReq",
+                    "showToast('Vui lòng nhập đầy đủ!', 'error');", true);
+
             }
         }
     }

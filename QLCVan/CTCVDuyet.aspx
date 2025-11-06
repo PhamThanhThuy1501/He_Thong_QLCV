@@ -267,8 +267,8 @@ border: 1px solid #0b5ed7;
                 <div class="ctl ">
                     <asp:Repeater ID="rptfilecv" runat="server">
                         <ItemTemplate>
-                            <div class="file-line" style="margin-bottom:6px;">
-                                <a class="filename" href='<%# Eval("Url") %>' target="_blank">
+                            <div class="file-item" style="margin-bottom:6px;">
+                                <a class="filename" runat="server" href='<%# Eval("Url") %>' target="_blank">
                                     <%# Eval("TenFile") %>
                                 </a>
                                 <span class="file-size" style="margin-left:8px;color:#6b7280;">
@@ -278,6 +278,7 @@ border: 1px solid #0b5ed7;
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
+                    <asp:Literal ID="litNoFiles" runat="server" EnableViewState="false"></asp:Literal>
                 </div>
             </div>
         </div>

@@ -2,6 +2,8 @@
     CodeBehind="Trangchu.aspx.cs" Inherits="QLCVan.Trangchu" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
 
     <style>
@@ -28,16 +30,14 @@
             padding: 12px
         }
 
-        /* ===== ĐỒNG BỘ CHIỀU RỘNG SEARCH + BẢNG + TIÊU ĐỀ ===== */
-        .cv-box,
-        .gridwrap,
+        /* ✅ Căn giữa phần danh sách công văn */
         .cv-list-title {
-            width: 100%;
-            max-width: var(--content-w);
-            margin-left: auto;
-            margin-right: auto;
-            box-sizing: border-box;
-            padding: 16px 18px; /* giống nhau để mép trong thẳng hàng */
+            width: 100% !important;
+            max-width: var(--content-w) !important;
+            margin: 16px auto 10px !important;
+            padding: 8px 18px !important; /* trùng padding 2 bên với bảng */
+            box-sizing: border-box !important;
+            text-align: center !important;
         }
 
         .gridwrap {
@@ -50,29 +50,54 @@
             display: block !important; /* bỏ flex để bảng không lệch */
         }
 
-        /* ===== Thanh chạy chữ giống hình mẫu ===== */
+        /* ✅ Đảm bảo bảng căn giữa trong khung */
+        .gridview {
+            margin: 0 auto;
+        }
+
+        /* ===== ĐỒNG BỘ CHIỀU RỘNG SEARCH + BẢNG + TIÊU ĐỀ ===== */
+        .cv-box, .gridwrap, .cv-list-title {
+            width: 100%;
+            max-width: var(--content-w);
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box;
+            padding: 16px 18px;
+        }
+
+        .gridwrap {
+            width: 100% !important;
+            max-width: var(--content-w) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding: 0 18px !important; /* trùng 18px hai bên để thẳng hàng */
+            box-sizing: border-box !important;
+            display: block !important; /* bỏ flex để bảng không lệch */
+        }
+
+        /* ===== Thanh chạy chữ ===== */
         .welcome-bar {
-            background: #c00; /* nền đỏ đậm */
+            background: #c00;
             color: #fff;
-            border-radius: 4px; /* bo góc mềm */
-            padding: 8px 0; /* cao vừa để chữ nằm giữa */
+            border-radius: 4px;
+            padding: 8px 0;
             margin: 0 auto 26px auto;
-            font-weight: bold; /* in đậm */
+            font-weight: bold;
             text-align: center;
             display: flex;
-            align-items: center; /* căn giữa theo chiều cao */
+            align-items: center;
             justify-content: center;
-            height: 13px; /* chiều cao cố định để đều */
-            overflow: hidden; /* ẩn phần chữ thừa */
+            height: 30px;
+            overflow: hidden;
         }
 
             .welcome-bar marquee {
-                font-size: 16px; /* chữ lớn hơn chút */
+                font-size: 16px;
                 font-weight: bold;
                 color: #fff;
             }
 
-        /* TÌM KIẾM – đồng bộ chiều rộng với bảng */
+        /* TÌM KIẾM */
         .cv-box {
             background: #f3f4f6 !important;
             border: 1px solid #e5e7eb;
@@ -188,7 +213,6 @@
                     text-decoration: underline
                 }
 
-        /* Trích yếu: tối đa 2 dòng, dư "..." */
         .cell-trichyeu a {
             display: -webkit-box;
             -webkit-box-orient: vertical;
@@ -197,7 +221,6 @@
             line-height: 1.35;
         }
 
-        /* Badge trạng thái (cột cố định) */
         .status-cell {
             text-align: center;
             white-space: nowrap;
@@ -218,21 +241,19 @@
             color: #fff;
             border-color: #22c55e;
         }
-        /* Đã gửi */
+
         .badge--danger {
             background: #fff;
             color: #ef4444;
             border-color: #ef4444;
         }
-        /* Không duyệt */
+
         .badge--warning {
             background: #fff;
             color: #d97706;
             border-color: #f59e0b;
         }
-        /* Đang trình */
 
-        /* Thao tác: gọn để vừa cột 200px */
         .actions {
             display: flex;
             gap: 8px;
@@ -270,7 +291,6 @@
             color: #fff;
         }
 
-        /* Phân trang */
         .pager {
             text-align: center;
             padding: 10px;
@@ -402,13 +422,7 @@
             </div>
             <div class="field">
                 <label for="ddlLoai">Loại công văn:</label>
-                <asp:DropDownList ID="ddlLoai" runat="server" CssClass="select">
-                    <asp:ListItem Value="">-- Tất cả --</asp:ListItem>
-                    <asp:ListItem Value="1">Công văn đến</asp:ListItem>
-                    <asp:ListItem Value="0">Công văn đi</asp:ListItem>
-                    <asp:ListItem Value="2">Dự thảo</asp:ListItem>
-                    <asp:ListItem Value="3">Nội bộ</asp:ListItem>
-                </asp:DropDownList>
+                <asp:DropDownList ID="ddlLoai" runat="server" CssClass="select"></asp:DropDownList>
             </div>
             <div class="field">
                 <label for="txtFromDate">Từ ngày:</label>
@@ -455,7 +469,6 @@
         </div>
     </div>
 
-
     <div class="cv-list-title">DANH SÁCH CÔNG VĂN</div>
 
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" ChildrenAsTriggers="true">
@@ -469,7 +482,7 @@
                         <%-- Số công văn --%>
                         <asp:TemplateField SortExpression="SoCV" HeaderText="Số công văn">
                             <ItemTemplate>
-                                <a href='CTCV.aspx?id=<%#Eval("MaCV")%>'><%#Eval("SoCV") %></a>
+                                <%# Eval("SoCV") %>
                             </ItemTemplate>
                             <HeaderStyle Width="190px" />
                             <ItemStyle Width="190px" />
@@ -493,7 +506,7 @@
                         <%-- Trích yếu --%>
                         <asp:TemplateField SortExpression="TrichYeuND" HeaderText="Trích yếu nội dung">
                             <ItemTemplate>
-                                <a href='CTCV.aspx?id=<%#Eval("MaCV")%>'><%#Eval("TrichYeuND") %></a>
+                                <%# Eval("TrichYeuND") %>
                             </ItemTemplate>
                             <ItemStyle CssClass="cell-trichyeu" />
                         </asp:TemplateField>
@@ -527,13 +540,16 @@
                                         CommandName="EditCV"
                                         CommandArgument='<%# Eval("MaCV") %>'
                                         OnCommand="lnk_Command" />
-                                    <asp:LinkButton ID="lnk_Xoa" runat="server"
-                                        CssClass="action-pill action-del"
-                                        Text="Xóa"
-                                        CommandName="DeleteCV"
-                                        CommandArgument='<%# Eval("MaCV") %>'
-                                        OnCommand="lnk_Command"
-                                        OnClientClick="return confirm('Bạn có chắc chắn muốn xóa công văn này không?')" />
+                                   <asp:LinkButton ID="lnk_Xoa" runat="server"
+    CssClass="action-pill action-del"
+    Text="Xóa"
+    CommandName="DeleteCV"
+    CommandArgument='<%# Eval("MaCV") %>'
+    OnCommand="lnk_Command"
+    data-bs-toggle="modal"
+    data-bs-target="#confirmDeleteModal"
+    OnClientClick='<%# "setDeleteId(\"" + Eval("MaCV") + "\"); return false;" %>'>
+</asp:LinkButton>
 
                                 </div>
                             </ItemTemplate>
@@ -552,5 +568,66 @@
             <asp:AsyncPostBackTrigger ControlID="Button1" EventName="Click" />
         </Triggers>
     </asp:UpdatePanel>
+    <!-- Modal xác nhận xóa -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-danger">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteLabel">Xác nhận xoá</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc muốn xoá công văn này không?</p>
+        <asp:HiddenField ID="hdDeleteId" runat="server" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+        <asp:Button ID="btnConfirmDelete" runat="server" Text="Xoá" CssClass="btn btn-danger" OnClick="btnConfirmDelete_Click" />
+      </div>
     </div>
+  </div>
+</div>
+    <script>
+        function setDeleteId(maCV) {
+            document.getElementById('<%= hdDeleteId.ClientID %>').value = maCV;
+            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            modal.show();
+        }
+    </script>
+    <script>
+        // Khi modal xác nhận xóa bị đóng, loại bỏ lớp nền còn sót
+        document.addEventListener('hidden.bs.modal', function (event) {
+            document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+                el.remove();
+            });
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = ''; // tránh cuộn bị khóa
+        });
+    </script>
+
+        <!-- Toast container (fixed ở góc trên bên phải) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index:1080">
+  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div id="toastBody" class="toast-body">Đã xoá thành công</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Hàm hiển thị toast với message + màu
+    function showToast(message, bsBgClass) {
+        var toastEl = document.getElementById('liveToast');
+        var bodyEl = document.getElementById('toastBody');
+
+        // đổi nội dung + màu nền (success / danger / info ...)
+        bodyEl.textContent = message || 'Thành công';
+        toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-info', 'text-bg-warning');
+        toastEl.classList.add(bsBgClass || 'text-bg-success');
+
+        var toast = new bootstrap.Toast(toastEl, { delay: 2000 });
+        toast.show();
+    }
+</script>
 </asp:Content>

@@ -5,6 +5,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style type="text/css">
         /* Reset cơ bản và font */
         :root {
@@ -45,8 +47,8 @@
             display: flex;
             align-items: center; /* căn giữa theo chiều cao */
             justify-content: center;
-            height: 15px; /* chiều cao cố định để đều */
-            overflow: hidden; /* ẩn phần chữ thừa */
+            height: 30px; /* chiều cao cố định để đều */
+            overflow: hidden;
         }
 
             .welcome-bar marquee {
@@ -390,19 +392,16 @@
             <div class="form-field">
                 <asp:Label ID="lblDonViNhan" runat="server" Text="Đơn vị nhận:" CssClass="form-label"></asp:Label>
                 <div class="form-input-control">
-
-
-                    <%--<asp:DropDownList ID="ddlDonViNhan" runat="server" CssClass="form-select"
+                    <asp:DropDownList ID="ddlDonViNhan" Enabled="false" Visible="false"  runat="server" CssClass="form-select"
                         AutoPostBack="True" OnSelectedIndexChanged="ddlDonViNhan_SelectedIndexChanged">
                         <asp:ListItem Text="-- Chọn đơn vị nhận --" Value="" />
-                    </asp:DropDownList>--%>
+                    </asp:DropDownList>
 
-                    <!-- MỚI: cho phép chọn nhiều đơn vị -->
-<asp:ListBox ID="lstDonViNhan" runat="server"
-    SelectionMode="Multiple"
-    CssClass="form-control"
-    Height="150px">
-</asp:ListBox>
+                     <asp:ListBox ID="lstDonViNhan" runat="server"
+                        SelectionMode="Multiple"
+                        CssClass="form-control"
+                        Height="150px">
+                    </asp:ListBox>
                 </div>
             </div>
 
@@ -567,4 +566,30 @@
             </Triggers>
         </asp:UpdatePanel>
     </div> -->
+        <!-- Toast container -->
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index:1100"></div>
+
+<script>
+    // Hiển thị toast xanh góc phải như ảnh
+    function showToast(message, type) {
+        var container = document.getElementById('toastContainer');
+        var id = 't' + Date.now();
+        var bg = (type === 'success') ? 'text-bg-success'
+            : (type === 'error') ? 'text-bg-danger'
+                : 'text-bg-secondary';
+
+        container.insertAdjacentHTML('beforeend',
+            '<div id="' + id + '" class="toast align-items-center ' + bg + ' border-0" role="alert" aria-live="assertive" aria-atomic="true">' +
+            '<div class="d-flex">' +
+            '<div class="toast-body">' + message + '</div>' +
+            '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' +
+            '</div>' +
+            '</div>'
+        );
+
+        var toastEl = document.getElementById(id);
+        var toast = new bootstrap.Toast(toastEl, { delay: 2000 }); // tự tắt sau 2s
+        toast.show();
+    }
+</script>
 </asp:Content>
