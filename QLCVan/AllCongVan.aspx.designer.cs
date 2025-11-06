@@ -11,7 +11,7 @@ namespace QLCVan
 {
 
 
-    public partial class Trangchu
+    public partial class AllCongVan
     {
 
         /// <summary>
@@ -60,57 +60,39 @@ namespace QLCVan
         protected global::System.Web.UI.WebControls.TextBox txtToDate;
 
         /// <summary>
-        /// btnViewAll control.
+        /// lnkBackHome control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewAll;
+        protected global::System.Web.UI.WebControls.HyperLink lnkBackHome;
 
         /// <summary>
-        /// btnMyOnly control.
+        /// btnSearchAll control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnMyOnly;
+        protected global::System.Web.UI.WebControls.Button btnSearchAll;
 
         /// <summary>
-        /// lnkGoAll control.
+        /// UpdatePanelAll control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkGoAll;
+        protected global::System.Web.UI.UpdatePanel UpdatePanelAll;
 
         /// <summary>
-        /// Button1 control.
+        /// GridViewAll control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
-
-        /// <summary>
-        /// UpdatePanel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
-
-        /// <summary>
-        /// GridView1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.GridView GridViewAll;
     }
 }

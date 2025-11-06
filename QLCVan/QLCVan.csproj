@@ -161,6 +161,7 @@
     <Content Include="Scripts\viewerjs-0.5.8\ViewerJS\webodf.js" />
     <Content Include="SuaNguoiDung.aspx" />
     <Content Include="ThemNguoidung.aspx" />
+    <Content Include="AllCongVan.aspx" />
     <Content Include="Trangchu.aspx" />
     <Content Include="UserControl\HitCount.ascx" />
     <Content Include="ViewFile.aspx" />
@@ -343,6 +344,13 @@
     </Compile>
     <Compile Include="ThemNguoidung.aspx.designer.cs">
       <DependentUpon>ThemNguoidung.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AllCongVan.aspx.cs">
+      <DependentUpon>AllCongVan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AllCongVan.aspx.designer.cs">
+      <DependentUpon>AllCongVan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Trangchu.aspx.cs">
       <DependentUpon>Trangchu.aspx</DependentUpon>

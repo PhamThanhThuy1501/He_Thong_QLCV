@@ -3,6 +3,8 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style>
+
+    <style>
         :root {
             --red: #c00;
             --red-600: #a60d0d;
@@ -11,9 +13,9 @@
             --line: #e5e7eb;
             --bg: #f7f7f7;
             --white: #fff;
-            --content-w: 1100px; /* Đổi 1 chỗ này để tăng/giảm bề rộng Search + Bảng */
+            --content-w: 1100px;
         }
-
+        body { background: var(--bg); color: var(--ink); font-family: Arial, sans-serif }
         body {
             background: var(--bg);
             color: var(--ink);
@@ -38,31 +40,15 @@
             padding: 16px 18px; /* giống nhau để mép trong thẳng hàng */
         }
 
-        .cv-list-title {
-            text-align: center;
-            font-weight: 700;
-            font-size: 20px;
-            color: #0f172a;
-            margin: 12px 0 8px;
-            letter-spacing: .6px;
+        .gridwrap {
+            width: 100% !important;
+            max-width: var(--content-w) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding: 0 18px !important; /* trùng 18px hai bên để thẳng hàng */
+            box-sizing: border-box !important;
+            display: block !important; /* bỏ flex để bảng không lệch */
         }
-
-        .content-header {
-            background: transparent;
-            padding: 0;
-            border-bottom: none;
-            margin: 0 auto 6px auto;
-        }
-
-        .content-header-title {
-            text-transform: uppercase;
-            font-weight: 700;
-            font-size: 20px;
-            color: #444;
-            margin: 0 0 6px 0;
-            letter-spacing: 0;
-        }
-
 
         /* ===== Thanh chạy chữ giống hình mẫu ===== */
         .welcome-bar {
@@ -102,96 +88,50 @@
             letter-spacing: 1px;
         }
 
+    overflow: hidden; /* ẩn phần chữ thừa */
+}
+
+    .welcome-bar marquee {
+        font-size: 16px; /* chữ lớn hơn chút */
+        font-weight: bold;
+        color: #fff;
+    }
+
+        /* TÌM KIẾM */
+        .cv-box {
+            background: #f3f4f6 !important;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .cv-box-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #003366;
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
         .cv-box .cv-form {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
+            display: grid !important; grid-template-columns: 1fr 1fr 1fr !important;
             grid-template-areas: "socv tieude loai" "from to actions";
             gap: 14px 24px !important;
         }
+        .cv-box .cv-form > .field:nth-child(1) { grid-area: socv; }
+        .cv-box .cv-form > .field:nth-child(2) { grid-area: tieude; }
+        .cv-box .cv-form > .field:nth-child(3) { grid-area: loai; }
+        .cv-box .cv-form > .field:nth-child(4) { grid-area: from; }
+        .cv-box .cv-form > .field:nth-child(5) { grid-area: to; }
+        .cv-box .cv-form > .field:nth-child(6) { grid-area: actions; }
 
-            .cv-box .cv-form > .field:nth-child(1) {
-                grid-area: socv;
-            }
-
-            .cv-box .cv-form > .field:nth-child(2) {
-                grid-area: tieude;
-            }
-
-            .cv-box .cv-form > .field:nth-child(3) {
-                grid-area: loai;
-            }
-
-            .cv-box .cv-form > .field:nth-child(4) {
-                grid-area: from;
-            }
-
-            .cv-box .cv-form > .field:nth-child(5) {
-                grid-area: to;
-            }
-
-            .cv-box .cv-form > .field:nth-child(6) {
-                grid-area: actions;
-            }
-
-            .cv-box .cv-form .field {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 6px !important;
-            }
-
-            .cv-box .cv-form label {
-                margin: 0 !important;
-                font-weight: 200 !important;
-                font-size: 13px !important;
-                color: #1f2937 !important;
-            }
-
-            .cv-box .cv-form .input, .cv-box .cv-form .select {
-                background: #fff !important;
-                border: 1px solid #d1d5db !important;
-                border-radius: 8px !important;
-                padding: 8px 12px !important;
-                min-height: 10px;
-                font-size: 14px;
-            }
-
-            .cv-box .cv-form .btn, .cv-box .cv-form input.btn {
-                background: var(--red) !important;
-                color: #fff !important;
-                border: none !important;
-                border-radius: 6px !important;
-                padding: 6px 12px !important;
-                font-size: 13px !important;
-                font-weight: 500 !important;
-                justify-self: start;
-                cursor: pointer;
-                transition: all .2s ease-in-out;
-            }
-
-                .cv-box .cv-form .btn:hover, .cv-box .cv-form input.btn:hover {
-                    transform: scale(1.03);
-                }
-
-        @media (max-width:700px) {
-            .cv-box .cv-form {
-                grid-template-columns: 1fr 1fr !important;
-                grid-template-areas: "socv socv" "tieude loai" "from to" "actions actions";
-            }
+        .cv-box .cv-form .field { display: flex !important; flex-direction: column !important; gap: 6px !important; }
+        .cv-box .cv-form label { margin: 0 !important; font-weight: 200 !important; font-size: 13px !important; color: #1f2937 !important; }
+        .cv-box .cv-form .input, .cv-box .cv-form .select {
+            background: #fff !important; border: 1px solid #d1d5db !important; border-radius: 8px !important; padding: 8px 12px !important; min-height: 10px; font-size: 14px;
         }
 
-        @media (max-width:500px) {
-            .cv-box .cv-form {
-                grid-template-columns: 1fr !important;
-                grid-template-areas: "socv" "tieude" "loai" "from" "to" "actions";
-            }
-        }
-
-        .cv-note {
-            color: #ef4444;
-            font-size: 13px;
-            margin: 6px 0
-        }
-
+        .cv-box .cv-form .btn, .cv-box .cv-form input.btn {
         .cv-list-title {
             text-align: center;
             font-weight: 700;
@@ -223,26 +163,21 @@
             font-size: 13px;
             table-layout: fixed;
         }
+        .cv-box .cv-form .actions { display:flex; gap:10px; align-items:center; }
 
-            .gridview th {
-                background: var(--red);
-                color: #fff;
-                font-weight: bold;
-                padding: 8px;
-                border: 1px solid #ddd;
-                text-align: left;
+        @media (max-width:700px) {
+            .cv-box .cv-form {
+                grid-template-columns: 1fr 1fr !important;
+                grid-template-areas: "socv socv" "tieude loai" "from to" "actions actions";
             }
-
-            .gridview td {
-                border: 1px solid #ddd;
-                padding: 10px 12px;
-                color: #000;
-                vertical-align: middle;
+        }
+        @media (max-width:500px) {
+            .cv-box .cv-form {
+                grid-template-columns: 1fr !important;
+                grid-template-areas: "socv" "tieude" "loai" "from" "to" "actions";
             }
-
-            .gridview tr:nth-child(even) {
-                background: #f9f9f9
-            }
+        }
+        .hidden { display:none !important; }
 
             .gridview a {
                 color: #0066cc;
@@ -363,12 +298,89 @@
                 color: #fff;
                 font-weight: bold
             }
+                display: inline-block;
+                margin: 0 4px;
+                padding: 4px 8px;
+                border-radius: 3px;
+                color: #0066cc;
+                text-decoration: none;
+                border: 1px solid transparent;
+            }
+
+                .pager a:hover {
+                    border: 1px solid var(--red);
+                    color: var(--red)
+                }
+
+            .pager span {
+                border: 1px solid var(--red);
+                background: var(--red);
+                color: #fff;
+                font-weight: bold
+            }
+       /* ===== PHÂN TRANG MÀU & FONT GIỐNG 100% TRANG QLNGUOIDUNG ===== */
+.gridview .pager {
+    text-align: center;
+    padding: 10px 0 0 0 !important;
+    margin-top: 0 !important;
+    background: #fff;
+}
+
+.gridview .pager table {
+    margin: 0 auto !important;
+    border-collapse: separate !important;
+    border-spacing: 8px !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.gridview .pager tr,
+.gridview .pager td {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+/* Nút số trang */
+.gridview .pager a,
+.gridview .pager span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    color: #6b7280;          /* 👈 màu xám giống hệt QLNgườiDùng */
+    font-size: 15px;
+    font-weight: 400;        /* 👈 nhẹ hơn một chút cho đúng tông */
+    text-decoration: none;
+    margin: 0 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Trang hiện tại (được chọn) */
+.gridview .pager span {
+    background: #fff;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+/* Hover: chỉ sáng viền, không đổi màu chữ */
+.gridview .pager a:hover {
+    border-color: #9ca3af;
+    background: #f9fafb;
+    color: #6b7280;
+}
+
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="content-header">
-        <h2 class="content-header-title">XEM CÔNG VĂN</h2>
+        <h2 class="content-header-title">XEM CÔNG VĂN CỦA TÀI KHOẢN</h2>
     </div>
 
     <div class="welcome-bar">
@@ -377,7 +389,6 @@
         </marquee>
     </div>
 
-    <!-- TÌM KIẾM VĂN BẢN -->
     <div class="cv-box">
         <div class="cv-box-title">TÌM KIẾM VĂN BẢN</div>
         <div class="cv-form">
@@ -386,8 +397,8 @@
                 <asp:TextBox ID="TextBox1" runat="server" CssClass="input" placeholder="Nhập số công văn" />
             </div>
             <div class="field">
-                <label for="txtTieuDe">Tiêu đề:</label>
-                <asp:TextBox ID="txtTieuDe" runat="server" CssClass="input" placeholder="Nhập tiêu đề" />
+                        <%-- Ngày gửi (110px) --%>
+                        <asp:BoundField DataField="NgayGui" HeaderText="Ngày gửi" SortExpression="Ngaygui" DataFormatString="{0:dd/MM/yyyy}">
             </div>
             <div class="field">
                 <label for="ddlLoai">Loại công văn:</label>
@@ -407,10 +418,40 @@
                 <label for="txtToDate">Đến ngày:</label>
                 <asp:TextBox ID="txtToDate" runat="server" CssClass="input" TextMode="Date" placeholder="mm/dd/yyyy" />
             </div>
-            <div class="field">
-                <label></label>
-                <asp:Button ID="Button1" runat="server" Text="Tìm kiếm" CssClass="btn" OnClick="btnSearch_Click" />
-            </div>
+
+            <!-- HAI NÚT: Xem toàn bộ & Xem của tôi -->
+<div class="field" style="display:flex;align-items:end;">
+    <label></label>
+    <div class="actions">
+                                <div class="actions">
+                                    <!--<a href='CTCV.aspx?id=<%# Eval("MaCV") %>' class="action-pill action-view">Xem</a>-->
+                                     <asp:LinkButton
+            runat="server"
+            Text="↺ Xem toàn bộ công văn"
+            CssClass="btn btn-outline hidden"
+            Visible="false" />
+
+        <asp:Button ID="btnMyOnly"
+            runat="server"
+            Text="↩ Xem công văn của tôi"
+            CssClass="btn btn-gray hidden"
+            Visible="false" />
+
+        <!-- Nút chuyển trang (không postback) -->
+        <asp:HyperLink ID="lnkGoAll"
+            runat="server"
+            NavigateUrl="~/AllCongVan.aspx"
+            CssClass="btn"
+            Text="↺ Xem toàn bộ công văn" />
+
+        <!-- Tìm kiếm -->
+        <asp:Button ID="Button1"
+            runat="server"
+            Text="Tìm kiếm"
+            CssClass="btn"
+            OnClick="btnSearch_Click" />
+    </div>
+</div>
         </div>
     </div>
 
@@ -425,7 +466,7 @@
                     OnPageIndexChanging="GridView1_PageIndexChanging1"
                     ShowFooter="False" GridLines="None">
                     <Columns>
-                        <%-- Số công văn (190px) --%>
+                        <%-- Số công văn --%>
                         <asp:TemplateField SortExpression="SoCV" HeaderText="Số công văn">
                             <ItemTemplate>
                                 <a href='CTCV.aspx?id=<%#Eval("MaCV")%>'><%#Eval("SoCV") %></a>
@@ -434,13 +475,22 @@
                             <ItemStyle Width="190px" />
                         </asp:TemplateField>
 
+                        <%-- Tiêu đề (260px) - mới thêm --%>
+                        <asp:TemplateField SortExpression="TieuDeCV" HeaderText="Tiêu đề">
+                            <ItemTemplate>
+                                <%# Eval("TieuDeCV") %>
+                            </ItemTemplate>
+                            <HeaderStyle Width="260px" />
+                            <ItemStyle Width="260px" />
+                        </asp:TemplateField>
+
                         <%-- Ngày gửi (110px) --%>
                         <asp:BoundField DataField="NgayGui" HeaderText="Ngày gửi" SortExpression="Ngaygui" DataFormatString="{0:dd/MM/yyyy}">
                             <HeaderStyle Width="110px" />
                             <ItemStyle Width="110px" />
                         </asp:BoundField>
 
-                        <%-- Trích yếu: tự giãn + ellipsis 2 dòng --%>
+                        <%-- Trích yếu --%>
                         <asp:TemplateField SortExpression="TrichYeuND" HeaderText="Trích yếu nội dung">
                             <ItemTemplate>
                                 <a href='CTCV.aspx?id=<%#Eval("MaCV")%>'><%#Eval("TrichYeuND") %></a>
@@ -448,7 +498,7 @@
                             <ItemStyle CssClass="cell-trichyeu" />
                         </asp:TemplateField>
 
-                        <%-- TRẠNG THÁI (120px – cố định) --%>
+                        <%-- Trạng thái --%>
                         <asp:TemplateField HeaderText="Trạng thái">
                             <ItemTemplate>
                                 <%# Eval("TrangThai") %>
@@ -457,12 +507,11 @@
                             <ItemStyle CssClass="status-cell" Width="120px" HorizontalAlign="Center" />
                         </asp:TemplateField>
 
-                        <%-- Thao tác (200px) --%>
+                        <%-- Thao tác --%>
                         <asp:TemplateField HeaderText="Thao tác">
                             <ItemTemplate>
                                 <div class="actions">
-                                    <!--<a href='CTCV.aspx?id=<%# Eval("MaCV") %>' class="action-pill action-view">Xem</a>-->
-                                     <asp:LinkButton
+                                    <asp:LinkButton
                                         ID="lnk_Xem"
                                         runat="server"
                                         CssClass="action-pill action-view"
@@ -498,6 +547,9 @@
         </ContentTemplate>
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="GridView1" />
+            <asp:AsyncPostBackTrigger ControlID="btnViewAll" EventName="Click" />
+            <asp:AsyncPostBackTrigger ControlID="btnMyOnly" EventName="Click" />
+            <asp:AsyncPostBackTrigger ControlID="Button1" EventName="Click" />
         </Triggers>
     </asp:UpdatePanel>
     </div>

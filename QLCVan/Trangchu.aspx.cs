@@ -2,7 +2,9 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -13,11 +15,10 @@ namespace QLCVan
         InfoDataContext db = new InfoDataContext();
         string maQuyenYeuCau = "RAll";
         string maQuyenXemToanBoCongVan = "Q016";
+        string maQuyenXemToanBoCongVan = "Q016"; // Quyền xem toàn bộ
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
             if (Session["TenDN"] == null)
             {
                 Response.Redirect("Dangnhap.aspx");
@@ -25,11 +26,20 @@ namespace QLCVan
 
             if (!IsPostBack)
             {
+<<<<<<< Updated upstream
+=======
+                // Mặc định: xem công văn liên quan tài khoản
+                ViewState["ViewAll"] = false;
+>>>>>>> Stashed changes
                 LoadData();
             }
 
+            // Áp UI mỗi vòng đời để nút đúng quyền & trạng thái
+            ApplyPermissionUI();
+            UpdateToggleButtonsUI();
         }
 
+<<<<<<< Updated upstream
         private void LoadData()
         {
             if (Session["MaNguoiDung"] == null)
@@ -51,6 +61,67 @@ namespace QLCVan
             }
 
             // 🔹 Công văn do user gửi
+=======
+        /* ===================== UI Helpers ===================== */
+
+        // alert() an toàn – chống lỗi escape chuỗi
+        private void Alert(string message)
+        {
+            var safe = HttpUtility.JavaScriptStringEncode(message ?? string.Empty);
+            ScriptManager.RegisterStartupScript(
+                this,
+                this.GetType(),
+                Guid.NewGuid().ToString("N"),
+                $"alert('{safe}');",
+                true
+            );
+        }
+
+        // Ẩn/hiện nút theo quyền
+        private void ApplyPermissionUI()
+        {
+            bool canViewAll = PermissionHelper.HasPermission(maQuyenXemToanBoCongVan);
+
+            // Nút Xem toàn bộ chỉ hiện khi có quyền Q016
+            if (btnViewAll != null) btnViewAll.Visible = canViewAll;
+
+            // Nút Xem của tôi luôn hiện để quay về chế độ cá nhân
+            if (btnMyOnly != null) btnMyOnly.Visible = true;
+        }
+
+        // Cập nhật text/cảm quan 2 nút theo trạng thái
+        private void UpdateToggleButtonsUI()
+        {
+            bool viewAll = ViewState["ViewAll"] as bool? == true;
+
+            if (btnViewAll != null)
+            {
+                btnViewAll.Text = "↺ Xem toàn bộ công văn";
+                // btnViewAll.Enable = PermissionHelper.HasPermission(...) (đã Visible theo quyền)
+            }
+
+            if (btnMyOnly != null)
+            {
+                btnMyOnly.Text = "↩ Xem công văn của tôi";
+                // Khi đang ở chế độ của tôi, có thể disable nhẹ nhàng nếu muốn:
+                // btnMyOnly.Enabled = viewAll;  // (tùy bạn, để mặc định Enabled=true cho dễ thao tác)
+            }
+        }
+
+        /* ===================== DỮ LIỆU ===================== */
+
+        /// <summary>
+        /// Dữ liệu mặc định: công văn do user gửi + công văn user là người nhận
+        /// (hợp nhất, bỏ trùng, sắp xếp mới nhất)
+        /// </summary>
+        private void LoadData()
+        {
+            string maNguoiDung = Session["MaNguoiDung"] as string;
+            if (string.IsNullOrWhiteSpace(maNguoiDung))
+                return;
+
+            // Công văn do user gửi
+>>>>>>> Stashed changes
             var congVanGui = from cv in db.tblNoiDungCVs
                              join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
                              where cv.MaNguoiGui == maNguoiDung
@@ -66,11 +137,19 @@ namespace QLCVan
                                  VaiTro = "Người gửi"
                              };
 
+<<<<<<< Updated upstream
             // 🔹 Công văn gửi đến đơn vị của user
             var congVanNhan = from cvdv in db.tblNoiDungCV_DonViNhans
                               join cv in db.tblNoiDungCVs on cvdv.MaCV equals cv.MaCV
                               join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
                               where cvdv.MaDonViNhan == maDonViNguoiDung
+=======
+            // Công văn user là người nhận (dựa tblGuiNhans)
+            var congVanNhan = from gn in db.tblGuiNhans
+                              join cv in db.tblNoiDungCVs on gn.MaCV equals cv.MaCV
+                              join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
+                              where gn.MaNguoiNhan == maNguoiDung
+>>>>>>> Stashed changes
                               select new
                               {
                                   cv.MaCV,
@@ -80,6 +159,7 @@ namespace QLCVan
                                   cv.TrichYeuND,
                                   cv.TrangThai,
                                   cv.NgayGui,
+<<<<<<< Updated upstream
                                   VaiTro = "Đơn vị nhận"
                               };
 
@@ -92,66 +172,68 @@ namespace QLCVan
 
 
             // 🔹 Gán vào GridView
+=======
+                                  VaiTro = "Người nhận"
+                              };
+
+            // Hợp nhất & sắp xếp
+            var allData = congVanGui.Concat(congVanNhan)
+                                    .GroupBy(x => x.MaCV)
+                                    .Select(g => g.First())
+                                    .OrderByDescending(x => x.NgayGui)
+                                    .ToList();
+
+>>>>>>> Stashed changes
             GridView1.DataSource = allData;
             GridView1.DataBind();
         }
 
+<<<<<<< Updated upstream
 
 
         protected void lnk_Xoa_Click(object sender, EventArgs e)
+=======
+        /// <summary>
+        /// Tải toàn bộ công văn trong hệ thống (chỉ khi có quyền Q016)
+        /// </summary>
+        private void LoadAllData()
+>>>>>>> Stashed changes
         {
-            //string permisson = (Session["QuyenHan"] as string)?.Trim();
+            var all = (from cv in db.tblNoiDungCVs
+                       join loai in db.tblLoaiCVs on cv.MaLoaiCV equals loai.MaLoaiCV
+                       orderby cv.NgayGui descending
+                       select new
+                       {
+                           cv.MaCV,
+                           cv.SoCV,
+                           loai.TenLoaiCV,
+                           cv.NgayGui,
+                           TieuDeCV = cv.TieuDeCV.Length > 50 ? cv.TieuDeCV.Substring(0, 50) + "..." : cv.TieuDeCV,
+                           cv.CoQuanBanHanh,
+                           cv.GhiChu,
+                           cv.NgayBanHanh,
+                           cv.NguoiKy,
+                           cv.NoiNhan,
+                           TrichYeuND = cv.TrichYeuND.Length > 200 ? cv.TrichYeuND.Substring(0, 200) + "..." : cv.TrichYeuND,
+                           cv.TrangThai
+                       }).ToList();
 
-            //if (string.Equals(permisson, "Admin", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    LinkButton lnk = sender as LinkButton;
-            //    string maCv = lnk.CommandArgument;
-
-            //    foreach (tblFileDinhKem item in db.tblFileDinhKems.Where(f => f.MaCV == maCv))
-            //        db.tblFileDinhKems.DeleteOnSubmit(item);
-
-            //    tblNoiDungCV cv = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCv);
-            //    if (cv != null)
-            //    {
-            //        db.tblNoiDungCVs.DeleteOnSubmit(cv);
-            //        db.SubmitChanges();
-            //        LoadData();
-            //    }
-            //}
+            GridView1.DataSource = all;
+            GridView1.DataBind();
         }
 
         protected void GridView1_PageIndexChanging1(object sender, GridViewPageEventArgs e)
         {
             GridView1.PageIndex = e.NewPageIndex;
-            LoadData();
+
+            bool viewAll = ViewState["ViewAll"] as bool? == true;
+            if (viewAll && PermissionHelper.HasPermission(maQuyenXemToanBoCongVan))
+                LoadAllData();
+            else
+                LoadData();
         }
 
-        // DÙNG LẠI: nếu cần text đơn giản
-        public string kttrangthai(object obj)
-        {
-            bool trangthai = bool.Parse(obj.ToString());
-            return trangthai ? "Đã duyệt" : "Chưa duyệt";
-        }
-
-        // **TRẠNG THÁI HIỂN THỊ DẠNG BADGE – CỐ ĐỊNH THEO 3 GIÁ TRỊ**
-        // - true  -> "Đã gửi" (xanh đặc)
-        // - false + GuiHayNhan = 0 -> "Không duyệt" (đỏ viền)
-        // - false + GuiHayNhan != 0 -> "Đang trình" (cam viền)
-        public string GetTrangThai(object oTrangThai, object oGuiHayNhan)
-        {
-            bool trangThai = false;
-            int guiHayNhan = -1;
-            if (oTrangThai != null) bool.TryParse(oTrangThai.ToString(), out trangThai);
-            if (oGuiHayNhan != null) int.TryParse(oGuiHayNhan.ToString(), out guiHayNhan);
-
-            if (trangThai)
-                return "<span class='badge badge--success'>Đã gửi</span>";
-
-            if (guiHayNhan == 0)
-                return "<span class='badge badge--danger'>Không duyệt</span>";
-
-            return "<span class='badge badge--warning'>Đang trình</span>";
-        }
+        /* ===================== TÌM KIẾM ===================== */
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
@@ -164,13 +246,13 @@ namespace QLCVan
 
             string keyword = TextBox1.Text.Trim();
             string tieuDe = txtTieuDe.Text.Trim();
-            string loai = ddlLoai.SelectedValue;
+            string loai = ddlLoai.SelectedValue; // "" = tất cả; "0" = đi; "1" = đến; ...
+
             DateTime fromDate, toDate;
-
-
             IQueryable<CVLoaiCV> q;
 
-            if (PermissionHelper.HasPermission("Q016"))
+            // Nếu có quyền xem toàn bộ (Q016) => nguồn là tất cả
+            if (PermissionHelper.HasPermission(maQuyenXemToanBoCongVan) && (ViewState["ViewAll"] as bool? == true))
             {
                 q = from cv in db.tblNoiDungCVs
                     join loaiCV in db.tblLoaiCVs on cv.MaLoaiCV equals loaiCV.MaLoaiCV
@@ -178,6 +260,7 @@ namespace QLCVan
             }
             else
             {
+                // Chỉ công văn liên quan
                 var congVanGui = from cv in db.tblNoiDungCVs
                                  join loaiCV in db.tblLoaiCVs on cv.MaLoaiCV equals loaiCV.MaLoaiCV
                                  where cv.MaNguoiGui == maNguoiDung
@@ -198,17 +281,17 @@ namespace QLCVan
             if (!string.IsNullOrEmpty(tieuDe))
                 q = q.Where(x => x.cv.TieuDeCV.Contains(tieuDe));
 
-            if (!string.IsNullOrEmpty(loai) && loai != "0")
-            {
-                int loaiCV = int.Parse(loai);
-                q = q.Where(x => x.cv.MaLoaiCV == loaiCV);
-            }
+            if (!string.IsNullOrEmpty(loai) && int.TryParse(loai, out int loaiCVVal))
+                q = q.Where(x => x.cv.MaLoaiCV == loaiCVVal);
 
             if (DateTime.TryParse(txtFromDate.Text.Trim(), out fromDate))
-                q = q.Where(x => x.cv.NgayGui >= fromDate);
+                q = q.Where(x => x.cv.NgayGui >= fromDate.Date); // >= 00:00
 
             if (DateTime.TryParse(txtToDate.Text.Trim(), out toDate))
-                q = q.Where(x => x.cv.NgayGui <= toDate);
+            {
+                DateTime toNext = toDate.Date.AddDays(1);        // < ngày kế tiếp
+                q = q.Where(x => x.cv.NgayGui < toNext);
+            }
 
             var data = q
                 .OrderByDescending(x => x.cv.NgayGui)
@@ -226,47 +309,101 @@ namespace QLCVan
                     x.cv.NoiNhan,
                     TrichYeuND = x.cv.TrichYeuND.Length > 200 ? x.cv.TrichYeuND.Substring(0, 200) + "..." : x.cv.TrichYeuND,
                     x.cv.TrangThai
-                });
+                })
+                .ToList();
 
-            GridView1.DataSource = data.ToList();
+            // Khi bấm Tìm kiếm, mình coi như đang lọc theo điều kiện hiện tại
+            ViewState["ViewAll"] = (ViewState["ViewAll"] as bool? == true) && PermissionHelper.HasPermission(maQuyenXemToanBoCongVan);
+            GridView1.PageIndex = 0;
+            GridView1.DataSource = data;
             GridView1.DataBind();
+
+            UpdateToggleButtonsUI();
+            ApplyPermissionUI();
         }
+
+        /* ===================== 2 NÚT CHUYỂN CHẾ ĐỘ ===================== */
+
+        // Xem toàn bộ (chỉ khi có Q016)
+        protected void btnViewAll_Click(object sender, EventArgs e)
+        {
+            if (!PermissionHelper.HasPermission(maQuyenXemToanBoCongVan))
+            {
+                Alert("Bạn không có quyền xem toàn bộ công văn!");
+                return;
+            }
+
+            // Xóa bộ lọc UI
+            TextBox1.Text = string.Empty;
+            txtTieuDe.Text = string.Empty;
+            if (ddlLoai.Items.Count > 0) ddlLoai.SelectedIndex = 0;
+            txtFromDate.Text = string.Empty;
+            txtToDate.Text = string.Empty;
+
+            ViewState["ViewAll"] = true;
+            GridView1.PageIndex = 0;
+            LoadAllData();
+
+            UpdateToggleButtonsUI();
+            ApplyPermissionUI();
+        }
+
+        // Xem công văn của tôi (luôn cho phép)
+        protected void btnMyOnly_Click(object sender, EventArgs e)
+        {
+            ViewState["ViewAll"] = false;
+            GridView1.PageIndex = 0;
+            LoadData();
+
+            UpdateToggleButtonsUI();
+            ApplyPermissionUI();
+        }
+
+        /* ===================== XÓA & HÀNH ĐỘNG ===================== */
+
         private void XoaCongVan(string maCv)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(maCv))
                 {
-                    ScriptManager.RegisterStartupScript(
-                        this,
-                        this.GetType(),
-                        "invalidId",
-                        "alert('Mã công văn không hợp lệ!');",
-                        true
-                    );
+                    Alert("Mã công văn không hợp lệ!");
                     return;
                 }
 
+<<<<<<< Updated upstream
                 // 🔹 Xóa trước trong các bảng phụ có ràng buộc FK
+=======
+                // Xóa phụ thuộc: file đính kèm
+>>>>>>> Stashed changes
                 var fileDinhKemList = db.tblFileDinhKems.Where(f => f.MaCV == maCv).ToList();
                 if (fileDinhKemList.Any())
                     db.tblFileDinhKems.DeleteAllOnSubmit(fileDinhKemList);
 
+<<<<<<< Updated upstream
                 var donViNhanList = db.tblNoiDungCV_DonViNhans.Where(d => d.MaCV == maCv).ToList();
                 if (donViNhanList.Any())
                     db.tblNoiDungCV_DonViNhans.DeleteAllOnSubmit(donViNhanList);
 
+=======
+                // Xóa phụ thuộc: bảng giao nhận (người nhận)
+>>>>>>> Stashed changes
                 var guiNhanList = db.tblGuiNhans.Where(g => g.MaCV == maCv).ToList();
                 if (guiNhanList.Any())
                     db.tblGuiNhans.DeleteAllOnSubmit(guiNhanList);
 
+<<<<<<< Updated upstream
                 // 🔹 Sau đó mới xóa nội dung công văn chính
+=======
+                // Xóa nội dung chính
+>>>>>>> Stashed changes
                 var cv = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCv);
                 if (cv != null)
                 {
                     db.tblNoiDungCVs.DeleteOnSubmit(cv);
                     db.SubmitChanges();
 
+<<<<<<< Updated upstream
                     ScriptManager.RegisterStartupScript(
                         this,
                         this.GetType(),
@@ -274,11 +411,19 @@ namespace QLCVan
                         "alert('Đã xóa công văn và dữ liệu liên quan thành công!');",
                         true
                     );
+=======
+                    Alert("Đã xóa công văn và dữ liệu liên quan thành công!");
+>>>>>>> Stashed changes
 
-                    LoadData();
+                    bool viewAll = ViewState["ViewAll"] as bool? == true;
+                    if (viewAll && PermissionHelper.HasPermission(maQuyenXemToanBoCongVan))
+                        LoadAllData();
+                    else
+                        LoadData();
                 }
                 else
                 {
+<<<<<<< Updated upstream
                     ScriptManager.RegisterStartupScript(
                         this,
                         this.GetType(),
@@ -286,10 +431,14 @@ namespace QLCVan
                         "alert('Không tìm thấy công văn cần xóa!');",
                         true
                     );
+=======
+                    Alert("Không tìm thấy công văn cần xóa!");
+>>>>>>> Stashed changes
                 }
             }
             catch (Exception ex)
             {
+<<<<<<< Updated upstream
                 System.Diagnostics.Debug.WriteLine("Lỗi khi xóa công văn: " + ex.Message);
 
                 ScriptManager.RegisterStartupScript(
@@ -299,6 +448,9 @@ namespace QLCVan
                     $"alert('Lỗi khi xóa công văn: {ex.Message.Replace("'", "\\'")}');",
                     true
                 );
+=======
+                Alert("Lỗi khi xóa công văn: " + ex.Message);
+>>>>>>> Stashed changes
             }
         }
 
@@ -314,35 +466,37 @@ namespace QLCVan
                     var cv = (from c in db.tblNoiDungCVs
                               where c.MaCV == maCV
                               select c).FirstOrDefault();
+                    if (cv == null)
+                    {
+                        Alert("Không tìm thấy công văn!");
+                        return;
+                    }
+
                     if (!string.IsNullOrEmpty(cv.NguoiDuyet))
-                    {
-                        // Nếu đã có người duyệt
                         Response.Redirect($"CTCVDuyet.aspx?id={maCV}");
-                    }
                     else
-                    {
-                        // Nếu chưa có người duyệt
                         Response.Redirect($"CTCVKhongDuyetDaGui.aspx?id={maCV}");
-                    }
                     break;
+
                 case "EditCV":
                     if (coQuyenSua)
                     {
                         var cv1 = (from c in db.tblNoiDungCVs
                                    where c.MaCV == maCV
                                    select c).FirstOrDefault();
-                        if (cv1.MaNguoiGui == Session["MaNguoiDung"].ToString())
+                        if (cv1 == null)
+                        {
+                            Alert("Không tìm thấy công văn!");
+                            return;
+                        }
+
+                        if (cv1.MaNguoiGui == (Session["MaNguoiDung"]?.ToString() ?? ""))
                         {
                             if (!string.IsNullOrEmpty(cv1.NguoiDuyet))
                             {
                                 if (cv1.TrangThai == "Đã được duyệt")
                                 {
-                                    ScriptManager.RegisterStartupScript(
-                                       this,
-                                       this.GetType(),
-                                       "noPermissionEdit",
-                                       "alert('Công văn đã được duyệt không thể sửa!');",
-                                       true);
+                                    Alert("Công văn đã được duyệt không thể sửa!");
                                 }
                                 else
                                 {
@@ -356,47 +510,25 @@ namespace QLCVan
                         }
                         else
                         {
-                            ScriptManager.RegisterStartupScript(
-                            this,
-                            this.GetType(),
-                            "noPermissionEdit",
-                            "alert('Bạn không có quyền sửa công văn!');",
-                            true
-                        );
+                            Alert("Bạn không có quyền sửa công văn!");
                         }
-
                     }
                     else
                     {
-                        ScriptManager.RegisterStartupScript(
-                            this,
-                            this.GetType(),
-                            "noPermissionEdit",
-                            "alert('Bạn không có quyền sửa công văn!');",
-                            true
-                        );
+                        Alert("Bạn không có quyền sửa công văn!");
                     }
                     break;
+
                 case "DeleteCV":
                     if (coQuyenXoa)
-                    {
                         XoaCongVan(maCV);
-                    }
                     else
-                    {
-                        ScriptManager.RegisterStartupScript(
-                            this,
-                            this.GetType(),
-                            "noPermissionEdit",
-                            "alert('Bạn không có quyền xoá công văn!');",
-                            true
-                        );
-                    }
+                        Alert("Bạn không có quyền xoá công văn!");
                     break;
             }
         }
-
     }
+
     public class CVLoaiCV
     {
         public tblNoiDungCV cv { get; set; }
