@@ -14,12 +14,19 @@ namespace QLCVan
         InfoDataContext db = new InfoDataContext();
         string maQuyenYeuCau = "RAll";
         string maQuyenXemToanBoCongVan = "Q016"; // Quyền xem toàn bộ
+        private string CurrentUserId()   // MaNguoiDung
+        {
+            return (Session["MaNguoiDung"] as string)?.Trim();
+        }
+
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["TenDN"] == null)
             {
                 Response.Redirect("Dangnhap.aspx");
+                return;
             }
 
             if (!IsPostBack)
@@ -33,6 +40,30 @@ namespace QLCVan
             // Áp UI mỗi vòng đời để nút đúng quyền & trạng thái
             ApplyPermissionUI();
             UpdateToggleButtonsUI();
+            // ---- Toast sau redirect (nếu có) ----
+            if (Session["toastMsg"] != null)
+            {
+                var msg = (Session["toastMsg"] ?? "").ToString();
+                var type = (Session["toastType"] ?? "text-bg-success").ToString();
+
+                // an toàn chuỗi cho JS
+                msg = System.Web.HttpUtility.JavaScriptStringEncode(msg);
+
+                // dùng key ngẫu nhiên để tránh đụng key giữa các postback
+                var key = "toast_" + Guid.NewGuid().ToString("N");
+
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    this.GetType(),
+                    key,
+                    $"showToast('{msg}', '{type}');",
+                    true
+                );
+
+                // xóa để không bắn lại ở lần load sau
+                Session.Remove("toastMsg");
+                Session.Remove("toastType");
+            }
         }
         // ✅ HÀM TẢI LOẠI CÔNG VĂN TỪ DB
         private void LoadLoaiCongVan()
@@ -318,52 +349,78 @@ namespace QLCVan
         }
 
         /* ===================== XÓA & HÀNH ĐỘNG ===================== */
+        protected void btnConfirmDelete_Click(object sender, EventArgs e)
+        {
+            string maCV = hdDeleteId.Value; // Lấy mã công văn từ HiddenField trong modal
 
+            if (!string.IsNullOrEmpty(maCV))
+            {
+                XoaCongVan(maCV); // Gọi hàm xóa bạn đã có sẵn
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(
+                    this,
+                    this.GetType(),
+                    "noId",
+                    "showToast('Không xác định được công văn cần xóa!', 'text-bg-warning');",
+                    true
+                );
+            }
+        }
         private void XoaCongVan(string maCv)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(maCv))
                 {
-                    Alert("Mã công văn không hợp lệ!");
-                    return;
+                    Toast("Mã công văn không hợp lệ!", "warning"); return;
                 }
 
-                // Xóa phụ thuộc: file đính kèm
-                var fileDinhKemList = db.tblFileDinhKems.Where(f => f.MaCV == maCv).ToList();
-                if (fileDinhKemList.Any())
-                    db.tblFileDinhKems.DeleteAllOnSubmit(fileDinhKemList);
+                var currentUserId = CurrentUserId();
+                if (string.IsNullOrWhiteSpace(currentUserId))
+                {
+                    Toast("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!", "warning"); return;
+                }
 
-                // Xóa phụ thuộc: bảng giao nhận (người nhận)
-                var guiNhanList = db.tblGuiNhans.Where(g => g.MaCV == maCv).ToList();
-                if (guiNhanList.Any())
-                    db.tblGuiNhans.DeleteAllOnSubmit(guiNhanList);
-
-                // Xóa nội dung chính
                 var cv = db.tblNoiDungCVs.SingleOrDefault(t => t.MaCV == maCv);
-                if (cv != null)
-                {
-                    db.tblNoiDungCVs.DeleteOnSubmit(cv);
-                    db.SubmitChanges();
+                if (cv == null) { Toast("Không tìm thấy công văn cần xóa!", "warning"); return; }
 
-                    Alert("Đã xóa công văn và dữ liệu liên quan thành công!");
-
-                    bool viewAll = ViewState["ViewAll"] as bool? == true;
-                    if (viewAll && PermissionHelper.HasPermission(maQuyenXemToanBoCongVan))
-                        LoadAllData();
-                    else
-                        LoadData();
-                }
-                else
+                // ✅ So sánh đúng kiểu định danh: MaNguoiDung ↔ MaNguoiGui
+                var senderId = (cv.MaNguoiGui ?? "").Trim();
+                if (!string.Equals(senderId, currentUserId, StringComparison.OrdinalIgnoreCase))
                 {
-                    Alert("Không tìm thấy công văn cần xóa!");
+                    Toast("Chỉ người gửi công văn mới có quyền xóa!", "danger"); return;
                 }
+
+                // Xóa phụ thuộc
+                var files = db.tblFileDinhKems.Where(f => f.MaCV == maCv).ToList();
+                if (files.Count > 0) db.tblFileDinhKems.DeleteAllOnSubmit(files);
+
+                var gn = db.tblGuiNhans.Where(g => g.MaCV == maCv).ToList();
+                if (gn.Count > 0) db.tblGuiNhans.DeleteAllOnSubmit(gn);
+
+                db.SubmitChanges();
+
+                // Xóa CV chính
+                db.tblNoiDungCVs.DeleteOnSubmit(cv);
+                db.SubmitChanges();
+
+                Toast("Đã xóa công văn thành công!", "success");
+                LoadData();
             }
             catch (Exception ex)
             {
                 Alert("Lỗi khi xóa công văn: " + ex.Message);
             }
+
+            void Toast(string msg, string type) =>
+                ScriptManager.RegisterStartupScript(this, GetType(), Guid.NewGuid().ToString(),
+                    $"showToast('{msg}', 'text-bg-{type}');", true);
         }
+
+
+
 
         protected void lnk_Command(object sender, CommandEventArgs e)
         {
@@ -377,16 +434,29 @@ namespace QLCVan
                     var cv = (from c in db.tblNoiDungCVs
                               where c.MaCV == maCV
                               select c).FirstOrDefault();
-                    if (cv == null)
+                    if (cv != null)
                     {
-                        Alert("Không tìm thấy công văn!");
-                        return;
+                        if (!string.IsNullOrEmpty(cv.NguoiDuyet))
+                        {
+                            // Nếu đã có người duyệt
+                            Response.Redirect($"CTCVDuyet.aspx?id={maCV}");
+                        }
+                        else
+                        {
+                            // Nếu chưa có người duyệt
+                            Response.Redirect($"CTCVKhongDuyetDaGui.aspx?id={maCV}");
+                        }
                     }
-
-                    if (!string.IsNullOrEmpty(cv.NguoiDuyet))
-                        Response.Redirect($"CTCVDuyet.aspx?id={maCV}");
                     else
-                        Response.Redirect($"CTCVKhongDuyetDaGui.aspx?id={maCV}");
+                    {
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "notFoundCV",
+                            "showToast('Không tìm thấy công văn!', 'text-bg-warning');",
+                            true
+                        );
+                    }
                     break;
 
                 case "EditCV":
@@ -395,46 +465,82 @@ namespace QLCVan
                         var cv1 = (from c in db.tblNoiDungCVs
                                    where c.MaCV == maCV
                                    select c).FirstOrDefault();
-                        if (cv1 == null)
-                        {
-                            Alert("Không tìm thấy công văn!");
-                            return;
-                        }
 
-                        if (cv1.MaNguoiGui == (Session["MaNguoiDung"]?.ToString() ?? ""))
+                        if (cv1 != null)
                         {
-                            if (!string.IsNullOrEmpty(cv1.NguoiDuyet))
+                            if (cv1.MaNguoiGui == Session["MaNguoiDung"].ToString())
                             {
-                                if (cv1.TrangThai == "Đã được duyệt")
+                                if (!string.IsNullOrEmpty(cv1.NguoiDuyet))
                                 {
-                                    Alert("Công văn đã được duyệt không thể sửa!");
+                                    if (cv1.TrangThai == "Đã được duyệt")
+                                    {
+                                        ScriptManager.RegisterStartupScript(
+                                           this,
+                                           this.GetType(),
+                                           "noPermissionEditApproved",
+                                           "showToast('Công văn đã được duyệt, không thể sửa!', 'text-bg-warning');",
+                                           true
+                                        );
+                                    }
+                                    else
+                                    {
+                                        Response.Redirect("~/SuaCongVan.aspx?id=" + maCV);
+                                    }
                                 }
                                 else
                                 {
-                                    Response.Redirect("~/SuaCongVan.aspx?id=" + maCV);
+                                    Response.Redirect("~/SuaCV.aspx?id=" + maCV);
                                 }
                             }
                             else
                             {
-                                Response.Redirect("~/SuaCV.aspx?id=" + maCV);
+                                ScriptManager.RegisterStartupScript(
+                                    this,
+                                    this.GetType(),
+                                    "noPermissionEditOwn",
+                                    "showToast('Bạn không có quyền sửa công văn này!', 'text-bg-warning');",
+                                    true
+                                );
                             }
                         }
                         else
                         {
-                            Alert("Bạn không có quyền sửa công văn!");
+                            ScriptManager.RegisterStartupScript(
+                                this,
+                                this.GetType(),
+                                "notFoundEdit",
+                                "showToast('Không tìm thấy công văn để sửa!', 'text-bg-warning');",
+                                true
+                            );
                         }
                     }
                     else
                     {
-                        Alert("Bạn không có quyền sửa công văn!");
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "noPermissionEdit",
+                            "showToast('Bạn không có quyền sửa công văn!', 'text-bg-warning');",
+                            true
+                        );
                     }
                     break;
 
                 case "DeleteCV":
                     if (coQuyenXoa)
+                    {
                         XoaCongVan(maCV);
+                    }
                     else
-                        Alert("Bạn không có quyền xoá công văn!");
+                    {
+                        ScriptManager.RegisterStartupScript(
+                            this,
+                            this.GetType(),
+                            "noPermissionDelete",
+                            "showToast('Bạn không có quyền xoá công văn!', 'text-bg-danger');",
+                            true
+                        );
+                    }
                     break;
             }
         }

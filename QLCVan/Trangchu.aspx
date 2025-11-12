@@ -2,6 +2,8 @@
     CodeBehind="Trangchu.aspx.cs" Inherits="QLCVan.Trangchu" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style type="text/css">
         :root {
             --red: #c00;
@@ -28,7 +30,7 @@
         .content-header-title { text-transform: uppercase; font-weight: 700; font-size: 20px; color: #444; margin: 0 0 6px 0; letter-spacing: 0; }
 
         .welcome-bar { background: #c00; color: #fff; border-radius: 4px; padding: 8px 0; margin: 0 auto 26px auto;
-            font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center; height: 13px; overflow: hidden; }
+            font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center; height: 30px; overflow: hidden; }
         .welcome-bar marquee { font-size: 16px; font-weight: bold; color: #fff; }
 
         .cv-box { background: #f3f4f6 !important; border: 1px solid #e5e7eb; border-radius: 10px; }
@@ -323,7 +325,13 @@
   margin-left: auto !important;
   margin-right: auto !important;           /* đảm bảo luôn giữa */
 }
-
+.btn-danger { background-color: #dc3545; }
+.btn-danger:hover { background-color: #bb2d3b; }
+.btn-secondary { background-color: #6c757d; }
+.modal-title {
+    font-weight: 540 !important;
+    color: #222;
+}
 
     </style>
 </asp:Content>
@@ -471,7 +479,7 @@
                                         CommandName="EditCV"
                                         CommandArgument='<%# Eval("MaCV") %>'
                                         OnCommand="lnk_Command" />
-                                   <asp:LinkButton ID="lnk_Xoa" runat="server"
+ <asp:LinkButton ID="lnk_Xoa" runat="server"
     CssClass="action-pill action-del"
     Text="Xóa"
     CommandName="DeleteCV"
@@ -480,6 +488,7 @@
     data-bs-toggle="modal"
     data-bs-target="#confirmDeleteModal"
     OnClientClick='<%# "setDeleteId(\"" + Eval("MaCV") + "\"); return false;" %>'>
+
 </asp:LinkButton>
 
                                 </div>
@@ -497,6 +506,55 @@
         </Triggers>
     </asp:UpdatePanel>
 
+
+
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-danger">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteLabel">Xác nhận xoá</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc muốn xoá công văn này không?</p>
+        <asp:HiddenField ID="hdDeleteId" runat="server" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+        <asp:Button ID="btnConfirmDelete" runat="server" Text="Xoá" CssClass="btn btn-danger" OnClick="btnConfirmDelete_Click" />
+      </div>
+    </div>
+  </div>
+</div>
+    <script>
+        function setDeleteId(maCV) {
+            document.getElementById('<%= hdDeleteId.ClientID %>').value = maCV;
+            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            modal.show();
+        }
+    </script>
+    <script>
+        // Khi modal xác nhận xóa bị đóng, loại bỏ lớp nền còn sót
+        document.addEventListener('hidden.bs.modal', function (event) {
+            document.querySelectorAll('.modal-backdrop').forEach(function (el) {
+                el.remove();
+            });
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = ''; // tránh cuộn bị khóa
+        });
+    </script>
+
+        <!-- Toast container (fixed ở góc trên bên phải) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index:1080">
+  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div id="toastBody" class="toast-body">Đã xoá thành công</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
 
 <script>
     // Hàm hiển thị toast với message + màu

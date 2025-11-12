@@ -324,14 +324,18 @@ namespace QLCVan
                     cmd.ExecuteNonQuery();
 
                     // Redirect về Trang chủ (không alert)
-                    Response.Redirect(ResolveUrl("~/Trangchu.aspx"), false);
-                    Context.ApplicationInstance.CompleteRequest();
+                    // ✔ đẩy thông điệp sang Trangchu.aspx
+                    Session["toastMsg"] = "Đã lưu công văn!";
+                    Session["toastType"] = "text-bg-success";
+
+                    Response.Redirect(ResolveUrl("~/Trangchu.aspx")); // KHÔNG cần CompleteRequest
                 }
             }
             catch (Exception ex)
             {
                 lblloi.Text = "Có lỗi khi lưu dữ liệu: " + ex.Message;
             }
+
         }
 
 
