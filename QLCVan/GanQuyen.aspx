@@ -167,40 +167,137 @@
 
 
 
-            /* ✅ Phân trang ra giữa, KHÔNG VIỀN */
-            .grid-pager {
-                display: flex;
-                justify-content: center;
-                /* 🔹 căn giữa ngang */
-                align-items: center;
-                gap: 10px;
-                margin-top: 25px;
-            }
+           /* ===== PHÂN TRANG NGOÀI BẢNG – GIỐNG QLNGUOIDUNG ===== */
+.pager-out {
+  width: 70%;
+  margin: 22px auto 0 auto;
+  text-align: center;
+}
 
-            .grid-pager a,
-            .grid-pager span {
-                border: none;
-                /* ❌ bỏ viền */
-                background: none;
-                /* ❌ bỏ nền trắng */
-                padding: 6px 12px;
-                border-radius: 4px;
-                font-weight: 500;
-                color: #111;
-                text-decoration: none;
-                transition: all 0.2s ease;
-            }
+.pager-out a,
+.pager-out span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  color: #4b5563;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  margin: 0 12px;
+}
 
-            .grid-pager a:hover {
-                color: #c00;
-                /* 🔹 khi hover chuyển sang đỏ */
-            }
+.pager-out span {
+  background: #fff;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
 
-            .grid-pager span {
-                background: #c00;
-                /* 🔹 trang hiện tại tô đỏ */
-                color: #fff;
-            }
+.pager-out a:hover { border-color: #d1d5db; }
+/* Bỏ gạch dưới cho LinkButton & giữ không có viền/đổ bóng */
+.search-bar a,
+.search-bar a:link,
+.search-bar a:visited,
+.search-bar a:hover,
+.search-bar a:focus {
+  text-decoration: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Nút tìm kiếm đỏ */
+.btn-search {
+  background: #c00 !important;   /* đỏ */
+  color: #fff !important;
+  border: none !important;
+  padding: 8px 18px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;           /* để icon căn giữa */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover/Focus màu đỏ đậm hơn */
+.btn-search:hover,
+.btn-search:focus {
+  background: #a00 !important;
+  color: #fff !important;
+  text-decoration: none !important;  /* phòng trường hợp browser thêm underline */
+}
+
+/* (tuỳ chọn) đảm bảo icon trắng */
+.btn-search i { color: #fff; }
+/* ===== PHÂN TRANG TRONG GRIDVIEW (pager gốc) ===== */
+.gridview .pager a,
+.gridview .pager span{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px;
+  border:1px solid #d1d5db; border-radius:4px;
+  background:#fff; color:#4b5563;
+  font-size:16px; font-weight:500; text-decoration:none;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .06s ease;
+}
+
+/* Trang hiện tại: tô đỏ */
+.gridview .pager span{
+  background:#C62828;           /* đỏ chủ đạo */
+  color:#fff;
+  border-color:#C62828;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+/* Hover: chuyển đỏ + nhô lên nhẹ */
+.gridview .pager a:hover{
+  background:#C62828;
+  color:#fff;
+  border-color:#C62828;
+  transform:translateY(-1px);
+}
+
+/* Active (nhấn giữ) */
+.gridview .pager a:active{ transform:translateY(0); }
+
+/* Focus bàn phím */
+.gridview .pager a:focus-visible{
+  outline:2px solid rgba(13,110,253,.35);
+  outline-offset:2px;
+}
+
+/* ===== PHÂN TRANG NGOÀI BẢNG – GIỐNG QLNHOMQUYEN ===== */
+.pager-out {
+  width:70%;
+ margin:22px auto 600px auto;
+  text-align:center;
+}
+.pager-out a, .pager-out span {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:42px; height:42px;
+  border:1px solid #d1d5db; border-radius:4px;
+  background:#fff; color:#4b5563; font-size:16px;
+  font-weight:500; text-decoration:none; margin:0 5px;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .06s ease;
+}
+.pager-out span {
+  background:#C62828; color:#fff; border-color:#C62828;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+.pager-out a:hover {
+  background:#C62828; color:#fff; border-color:#C62828;
+  transform:translateY(-1px);
+}
+.pager-out a:active{ transform:translateY(0); }
+.pager-out a:focus-visible{
+  outline:2px solid rgba(13,110,253,.35);
+  outline-offset:2px;
+}
+
+
         </style>
     </asp:Content>
 
@@ -233,29 +330,33 @@
 
             <asp:HiddenField ID="hdfMaNhom" runat="server" />
 
-            <!-- Bảng danh sách -->
-            <div class="table-wrapper">
-                <asp:GridView ID="gvGanQuyen" runat="server" AutoGenerateColumns="False" CssClass="table"
-                    AllowPaging="True" PageSize="5" OnPageIndexChanging="gvGanQuyen_PageIndexChanging"
-                    PagerStyle-CssClass="grid-pager" BorderStyle="None" OnRowCommand="gvGanQuyen_RowCommand">
+         <div class="table-wrapper">
+  <asp:GridView ID="gvGanQuyen" runat="server" AutoGenerateColumns="False"
+      CssClass="table table-bordered gridview"
+      AllowPaging="True" PageSize="5"
+      OnPageIndexChanging="gvGanQuyen_PageIndexChanging"
+      PagerStyle-CssClass="pagination pagination-source"
+      BorderStyle="None">
+      <Columns>
+        <asp:BoundField DataField="MaQuyen" HeaderText="Mã quyền" />
+        <asp:BoundField DataField="TenQuyen" HeaderText="Tên quyền" />
+        <asp:TemplateField HeaderText="Thao tác">
+          <ItemTemplate>
+            <asp:Button ID="btnGan" runat="server"
+                CommandName="ToggleQuyen"
+                CommandArgument='<%# Eval("MaQuyen") %>'
+                Text='<%# (bool)Eval("DaGan") ? "Đã gán" : "Gán" %>'
+                CssClass='<%# (bool)Eval("DaGan") ? "btn btn-outline-primary" : "btn btn-primary" %>' />
+          </ItemTemplate>
+        </asp:TemplateField>
+      </Columns>
+  </asp:GridView>
+</div>
 
-                    <Columns>
-                        <asp:BoundField DataField="MaQuyen" HeaderText="Mã quyền" />
-                        <asp:BoundField DataField="TenQuyen" HeaderText="Tên quyền" />
+<!-- ✅ Phân trang ngoài bảng -->
+<div id="pagerOutside" class="pager-out"></div>
 
-                        <asp:TemplateField HeaderText="Thao tác">
-                            <ItemTemplate>
-                                <asp:Button ID="btnGan" runat="server" CommandName="ToggleQuyen"
-                                    CommandArgument='<%# Eval("MaQuyen") %>' Type="button"
-                                    Text='<%# (bool)Eval("DaGan") ? "Đã gán" : "Gán" %>'
-                                    CssClass='<%# (bool)Eval("DaGan") ? "btn btn-outline-primary " : "btn btn-primary " %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-            </div>
-        </div>
-         <div id="toaster" class="toaster-wrap"></div>
+
         <script>
     // type: 'success' | 'error' | 'info' | 'warning'
     window.showToast = function (message, type) {
@@ -281,6 +382,34 @@
         var t = new bootstrap.Toast(el, { delay: 2200 });
         t.show();
         el.addEventListener('hidden.bs.toast', function () { el.remove(); });
-    };
+            };
+           
+          
+                (function () {
+                    function clonePager() {
+                        var grid = document.getElementById('<%= gvGanQuyen.ClientID %>');
+                        if (!grid) return;
+
+                        // Tìm pager gốc trong GridView
+                        var src = grid.querySelector('.pagination') || grid.querySelector('.grid-pager') || grid.querySelector('tr td > table');
+                        var out = document.getElementById('pagerOutside');
+                        if (!src || !out) return;
+
+                        out.innerHTML = '';
+                        src.querySelectorAll('a, span').forEach(el => out.appendChild(el.cloneNode(true)));
+                        src.style.display = 'none'; // ẩn pager gốc trong bảng
+                    }
+
+  if (document.readyState === 'loading')
+                document.addEventListener('DOMContentLoaded', clonePager);
+                else
+                clonePager();
+
+                if (typeof(Sys) !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager)
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(clonePager);
+})();
+    
+
+
         </script>
     </asp:Content>

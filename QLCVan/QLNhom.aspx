@@ -246,6 +246,8 @@
   width: 70% !important;    /* đồng nhất với toolbar */
   margin: 0 auto;           /* căn giữa */
 }
+    .modal-top .modal-dialog{ margin-top:6vh; } /* chỉnh 6 -> 8/10 tuỳ ý */
+
 
   </style>
 </asp:Content>
@@ -362,7 +364,7 @@
 
     <!-- Modal thêm đơn vị -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+   <div class="modal-dialog modal-dialog-scrollable mt-5">
 
         <div class="modal-content">
           <div class="modal-header">
@@ -383,7 +385,8 @@
 
     <!-- Modal Sửa đơn vị -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-dialog modal-dialog-scrollable mt-5">
+
 
         <div class="modal-content">
           <div class="modal-header">
@@ -411,7 +414,7 @@
 
    <!-- Modal Xác nhận xoá -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+   <div class="modal-dialog modal-dialog-scrollable mt-5">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="confirmDeleteLabel">Xác nhận xóa đơn vị</h5>

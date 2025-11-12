@@ -174,6 +174,74 @@
     background: #C00000;        /* 🔹 trang hiện tại tô đỏ */
     color: #fff;
   }
+  /* ===== PHÂN TRANG TRONG GRIDVIEW (pager gốc) ===== */
+.gridview .pager a,
+.gridview .pager span{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px;
+  border:1px solid #d1d5db; border-radius:4px;
+  background:#fff; color:#4b5563;
+  font-size:16px; font-weight:500; text-decoration:none;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .06s ease;
+}
+
+/* Trang hiện tại: tô đỏ */
+.gridview .pager span{
+  background:#C62828;           /* đỏ chủ đạo */
+  color:#fff;
+  border-color:#C62828;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+/* Hover: chuyển đỏ + nhô lên nhẹ */
+.gridview .pager a:hover{
+  background:#C62828;
+  color:#fff;
+  border-color:#C62828;
+  transform:translateY(-1px);
+}
+
+/* Active (nhấn giữ) */
+.gridview .pager a:active{ transform:translateY(0); }
+
+/* Focus bàn phím */
+.gridview .pager a:focus-visible{
+  outline:2px solid rgba(13,110,253,.35);
+  outline-offset:2px;
+}
+
+/* ===== PHÂN TRANG NGOÀI BẢNG (pager-out) ===== */
+.pager-out a,
+.pager-out span{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:42px; height:42px;
+  border:1px solid #d1d5db; border-radius:4px;
+  background:#fff; color:#4b5563;
+  font-size:16px; font-weight:500; text-decoration:none; margin:0 5px;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .06s ease;
+}
+
+/* Trang hiện tại: tô đỏ */
+.pager-out span{
+  background:#C62828;
+  color:#fff;
+  border-color:#C62828;
+  box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+
+/* Hover: đỏ + nhô lên */
+.pager-out a:hover{
+  background:#C62828;
+  color:#fff;
+  border-color:#C62828;
+  transform:translateY(-1px);
+}
+
+.pager-out a:active{ transform:translateY(0); }
+.pager-out a:focus-visible{
+  outline:2px solid rgba(13,110,253,.35);
+  outline-offset:2px;
+}
 </style>
 
 

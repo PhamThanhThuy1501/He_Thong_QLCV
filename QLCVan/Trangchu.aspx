@@ -333,6 +333,7 @@
     color: #222;
 }
 
+
     </style>
 </asp:Content>
 
@@ -570,5 +571,6 @@
         var toast = new bootstrap.Toast(toastEl, { delay: 2000 });
         toast.show();
     }
+
 </script>
 </asp:Content>
