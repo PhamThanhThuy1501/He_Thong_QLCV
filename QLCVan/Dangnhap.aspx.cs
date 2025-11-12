@@ -34,6 +34,12 @@ namespace QLCVan
             tblNguoiDung acc = db.tblNguoiDungs.SingleOrDefault(a => a.TenDN == Username.Text && a.MatKhau == (Password.Text));
             if (acc != null)
             {
+
+                if(acc.TrangThai == 0)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Tài khoản đã bị khoá, vui lòng liên hệ quản trị viên!');", true);
+                    return;
+                }
                 Session["MaNguoiDung"] = acc.MaNguoiDung;
                 Session["TenDN"] = Username.Text;
                 Session["Matkhau"] = (Password.Text);
